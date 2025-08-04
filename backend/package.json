@@ -1,0 +1,16 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "alarm system backend",
+  "license": "ISC",
+  "author": "Gian Marco Ninno",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "dev": "node --watch app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
