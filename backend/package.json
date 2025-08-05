@@ -1,14 +1,14 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "alarm system backend",
+  "description": "alarm system's backend",
   "license": "ISC",
   "author": "Gian Marco Ninno",
   "type": "module",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "node --watch app.js",
+    "start": "node --env-file=.env app.js",
+    "dev": "node --env-file=.env --watch app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

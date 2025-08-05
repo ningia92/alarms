@@ -25,11 +25,11 @@ export const getRooms = async (req, res) => {
     return { ...room, alarm: await redisClient.hGetAll(room.alarm) }
   }));
 
-  res.json(expandedRooms);
+  res.json(expandedRooms).end();
 }
 
 // @desc Get room
-// @route GET /api/rooms/:id
+// @route GET /api/v1/rooms/:id
 export const getRoom = async (req, res) => {
   const id = req.params.id;
 
@@ -45,21 +45,5 @@ export const getRoom = async (req, res) => {
   const expandedRoom = {...room, alarm: await redisClient.hGetAll(room.alarm)};
 
   res.json(expandedRoom);
-}
-
-// @desc Get alarm
-// @route GET /api/rooms/:id/alarm
-export const getAlarm = async (req, res) => {
-  const id = req.params.id;
-
-  const alarm = await redisClient.hGetAll(`room:${id}:alarm`);
-
-  if (Object.keys(alarm) === 0) {
-    const error = new Error('Alarm not found');
-    error.statusCode = 404;
-    throw error;
-  }
-
-  res.json(alarm);
 }
 
