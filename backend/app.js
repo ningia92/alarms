@@ -1,6 +1,6 @@
 import express from 'express';
 import roomRouter from './routes/rooms.js'
-import { notFound, errorHandler } from './middleware/error-handler.js';
+import { notFound, errorHandler } from './middleware/error-handling.js';
 
 const app = express();
 

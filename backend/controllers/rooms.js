@@ -2,6 +2,8 @@ import { getRedisClient } from '../db/redis-client.js';
 
 const redisClient = getRedisClient();
 
+// @desc Get rooms
+// @route GET /api/v1/rooms
 export const getRooms = async (req, res) => {
   // scan was used istead of keys (await redisClient.keys('room:*'))
   // because keys is not recommended for production use
@@ -26,6 +28,8 @@ export const getRooms = async (req, res) => {
   res.json(expandedRooms);
 }
 
+// @desc Get room
+// @route GET /api/rooms/:id
 export const getRoom = async (req, res) => {
   const id = req.params.id;
 
@@ -42,3 +46,20 @@ export const getRoom = async (req, res) => {
 
   res.json(expandedRoom);
 }
+
+// @desc Get alarm
+// @route GET /api/rooms/:id/alarm
+export const getAlarm = async (req, res) => {
+  const id = req.params.id;
+
+  const alarm = await redisClient.hGetAll(`room:${id}:alarm`);
+
+  if (Object.keys(alarm) === 0) {
+    const error = new Error('Alarm not found');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  res.json(alarm);
+}
+
