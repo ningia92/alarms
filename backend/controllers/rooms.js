@@ -9,7 +9,7 @@ export const getRooms = async (req, res) => {
   for await (const keys of redisClient.scanIterator({MATCH: 'room:*'}))
     keys.forEach(key => keyList.push(key));
 
-  if (keyList.length === 0) return res.json({ message: 'No rooms' });
+  if (keyList.length === 0) throw new Error('No rooms found');
 
   // regex to filter only the room keys (excluding alarm keys)
   const roomRegex = /^room:(\d){2}-(\d){2}$/g;
@@ -24,4 +24,21 @@ export const getRooms = async (req, res) => {
   }));
 
   res.json(expandedRooms);
+}
+
+export const getRoom = async (req, res) => {
+  const id = req.params.id;
+
+  const room = await redisClient.hGetAll(`room:${id}`);
+
+  if (Object.keys(room).length === 0) {
+    const error = new Error('Room not found');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  // because the alarm field contains a key it must be expanded
+  const expandedRoom = {...room, alarm: await redisClient.hGetAll(room.alarm)};
+
+  res.json(expandedRoom);
 }
