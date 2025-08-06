@@ -9,5 +9,10 @@ export const turnOnAlarm = async (req, res) => {
 
   await redisClient.hSet(`room:${id}:alarm`, { status: 'on' });
 
-  res.status(204).end();
+  // set these response headers to mitigate the problem of the caching caused by the unsafe GET
+  res
+    .set('Cache-Control', 'no-store')
+    .set('Expires', '0')
+    .status(204)
+    .end();
 }
