@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { turnOnAlarm } from '../controllers/alarmDevices.js';
+import { authorizeDevice } from '../middleware/auth-device.js';
 
 const alarmDeviceRouter = Router();
 
@@ -12,6 +13,6 @@ const alarmDeviceRouter = Router();
 // NOTE: the endpoint was taken from the previous system implementation and is not editable, but in
 // the future it would be a good idea to change the get method to: PATCH /api/v1/rooms/:id/alarm with
 // payload { "status": "on" }.
-alarmDeviceRouter.get('/:id/allarme/on', turnOnAlarm);
+alarmDeviceRouter.get('/:id/allarme/on', authorizeDevice, turnOnAlarm);
 
 export default alarmDeviceRouter;
