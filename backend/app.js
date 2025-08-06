@@ -1,6 +1,6 @@
 import express from 'express';
-import roomRouter from './routes/rooms.js'
-import alarmDeviceRouter from './routes/alarmDevices.js'
+import roomRouter from './routes/rooms.route.js';
+import alarmDeviceRouter from './routes/alarmDevices.route.js';
 import { notFound, errorHandler } from './middleware/error-handling.js';
 
 const app = express();
@@ -14,5 +14,5 @@ app.use('/stanza', alarmDeviceRouter);
 app.use(notFound);
 app.use(errorHandler);
 
-const PORT  = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, console.log(`Server listining on port ${PORT}`));
