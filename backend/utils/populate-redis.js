@@ -1,7 +1,7 @@
-import { getClient } from '../db/redis-client.js';
+import { getRedisClient } from '../db/redis-client.js';
 import rooms from './data.json' with { type: 'json' };
 
-const redisClient = getClient();
+const redisClient = getRedisClient();
 
 const flushDB = async () => redisClient.flushDb();
 

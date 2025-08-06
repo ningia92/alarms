@@ -2,13 +2,21 @@ import { getRedisClient } from '../db/redis-client.js';
 
 const redisClient = getRedisClient();
 
-// @desc Get rooms
-// @route GET /api/v1/rooms
+// @desc Get all rooms or rooms with alarm on/off
+// @route GET /api/v1/rooms?alarm_status=on|off
 export const getRooms = async (req, res) => {
+  const alarmStatus = req.query.alarm_status;
+
+  if (alarmStatus && (alarmStatus !== 'on' && alarmStatus !== 'off')) {
+    const error = new Error('Bad request');
+    error.statusCode = 400;
+    throw error;
+  }
+
   // scan was used istead of keys (await redisClient.keys('room:*'))
   // because keys is not recommended for production use
   const keyList = [];
-  for await (const keys of redisClient.scanIterator({MATCH: 'room:*'}))
+  for await (const keys of redisClient.scanIterator({ MATCH: 'room:*' }))
     keys.forEach(key => keyList.push(key));
 
   if (keyList.length === 0) throw new Error('No rooms found');
@@ -17,7 +25,6 @@ export const getRooms = async (req, res) => {
   const roomRegex = /^room:(\d){2}-(\d){2}$/g;
   const roomKeys = keyList.filter(key => key.match(roomRegex));
 
-  // get the values of all the fields of the selected hash
   const rooms = await Promise.all(roomKeys.map(key => redisClient.hGetAll(key)));
 
   // because the alarm field contains a key it must be expanded
@@ -25,7 +32,11 @@ export const getRooms = async (req, res) => {
     return { ...room, alarm: await redisClient.hGetAll(room.alarm) }
   }));
 
-  res.json(expandedRooms).end();
+  const alarmFilter = alarmStatus
+    ? expandedRooms.filter(room => room.alarm.status === alarmStatus)
+    : expandedRooms;
+
+  res.json(alarmFilter);
 }
 
 // @desc Get room
@@ -42,7 +53,7 @@ export const getRoom = async (req, res) => {
   }
 
   // because the alarm field contains a key it must be expanded
-  const expandedRoom = {...room, alarm: await redisClient.hGetAll(room.alarm)};
+  const expandedRoom = { ...room, alarm: await redisClient.hGetAll(room.alarm) };
 
   res.json(expandedRoom);
 }
