@@ -43,7 +43,7 @@ export const getRooms = async (req, res) => {
 // @route GET /api/v1/rooms/:id
 export const getRoom = async (req, res) => {
   const id = req.params.id;
-
+  
   const room = await redisClient.hGetAll(`room:${id}`);
 
   if (Object.keys(room).length === 0) {
