@@ -1,6 +1,7 @@
 import express from 'express';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
+import cors from 'cors';
 import roomRouter from './routes/rooms.route.js';
 import alarmDeviceRouter from './routes/alarmDevices.route.js';
 import { notFound, errorHandler } from './middleware/error-handling.js';
@@ -29,7 +30,8 @@ wss.on('connection', ws => {
 // make the WebSocket server globally accessible in the app so it can be used in controllers
 app.set('wss', wss);
 
-app.get('/', (req, res) => res.send('Alarms Homepage'));
+app.use(cors());
+
 app.use('/api/v1/rooms', roomRouter);
 // separate route for endpoint exposed to alarm devices
 // NOTE: read the comment inside the route/alarmDevices.js file
