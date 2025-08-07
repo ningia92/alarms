@@ -24,8 +24,15 @@ export const turnOnAlarm = async (req, res) => {
 
   await redisClient.hSet(`room:${id}:alarm`, { status: 'on' });
 
+  const wss = req.app.get('wss');
+  wss.clients.forEach(client => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify({ type: 'alarm_status_changed', roomId: id, status: 'on' }));
+    }
+  });
+
   // set these response headers to mitigate the problem of the caching caused by the unsafe GET
-  // Cache-Control: no-store indicates that any caches of any kind (private or shared) should 
+  // Cache-Control: no-store indicates that any caches of any kind (private or shared) should
   // not store the reponse
   // Expires: 0 ensures compatibility even with older HTTP clients
   res

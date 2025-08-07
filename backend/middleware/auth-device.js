@@ -2,7 +2,7 @@
 export const authorizeDevice = (req, res, next) => {
   const ip = req.ip;
   const IP_REGEX = process.env.IP_REGEX;
-  
+
   // =================================================================================
   // ::1 IS LOCALHOST AND IT IS ONLY FOR DEVELOPMENT PURPOSE. REMOVE IT IN PRODUCTION!
   // =================================================================================
