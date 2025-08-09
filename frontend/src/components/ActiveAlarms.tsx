@@ -1,14 +1,31 @@
-import React from 'react';
-import { type Room, AlarmStatus } from '../types';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import type { AlarmStatus, Room } from '../types';
 import BellIcon from './icons/BellIcon';
 
-interface ActiveAlarmsProps {
-  rooms: Room[];
-  onDeactivate: (roomId: number) => void;
-}
+const ActiveAlarms: React.FC = () => {
+  const [activeAlarms, setActiveAlarms] = useState<Room[]>([]);
 
-const ActiveAlarms: React.FC<ActiveAlarmsProps> = ({ rooms, onDeactivate }) => {
-  const activeAlarms = rooms.filter(room => room.status === AlarmStatus.Active);
+  useEffect(() => {
+    axios
+      .get('http://localhost:3000/api/v1/rooms?alarm_status=on')
+      .then(response => setActiveAlarms(response.data))
+      .catch(err => console.error(err));
+  }, []);
+
+  const turnOffAlarm = (roomId: string) => {
+    axios
+      .patch(`http://localhost:3000/api/v1/rooms/${roomId}/alarm`, { status: 'off' })
+      .then(() => {
+        return setActiveAlarms(activeAlarms.map(room => {
+          const status: AlarmStatus = 'off';
+          return room.id === roomId
+            ? { ...room, alarm: { ...room.alarm, status } }
+            : room
+        }));
+      })
+      .catch(err => console.error(err));
+  };
 
   return (
     <section>
@@ -28,7 +45,7 @@ const ActiveAlarms: React.FC<ActiveAlarmsProps> = ({ rooms, onDeactivate }) => {
                 className="flex items-center justify-between p-4 bg-danger-50 dark:bg-danger-500/10 rounded-lg"
               >
                 <span className="text-lg font-bold text-danger-700 dark:text-danger-200">
-                  {room.name}
+                  {room.type === 'room' ? "Stanza" : "Piscina"} {room.phone}
                 </span>
 
                 <div className="flex items-center gap-4">
@@ -37,7 +54,7 @@ const ActiveAlarms: React.FC<ActiveAlarmsProps> = ({ rooms, onDeactivate }) => {
                     <span className="text-sm font-semibold uppercase tracking-wider">ATTIVO</span>
                   </div>
                   <button
-                    onClick={() => onDeactivate(room.id)}
+                    onClick={() => turnOffAlarm(room.id)}
                     className="px-4 py-2 text-sm font-bold text-white bg-danger-500 rounded-lg hover:bg-danger-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-danger-50 dark:focus:ring-offset-danger-500/10 focus:ring-danger-500 shrink-0"
                   >
                     Disattiva
