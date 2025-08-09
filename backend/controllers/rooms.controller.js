@@ -66,7 +66,7 @@ export const getRoom = async (req, res) => {
 }
 
 // @desc Turn off room alarm
-// @route PATCH /api/v1/rooms/:id/alarm/
+// @route PATCH /api/v1/rooms/:id/alarm
 export const turnOffAlarm = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
