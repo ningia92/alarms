@@ -1,5 +1,5 @@
 import React from 'react';
-import { type Room, AlarmStatus } from '../types';
+import type { Room } from '../types';
 import BuildingIcon from './icons/BuildingIcon';
 import AlertTriangleIcon from './icons/AlertTriangleIcon';
 import ShieldCheckIcon from './icons/ShieldCheckIcon';
@@ -31,7 +31,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, iconContainerCl
 
 const Summary: React.FC<SummaryProps> = ({ rooms }) => {
   const totalRooms = rooms.length;
-  const activeAlarmsCount = rooms.filter(room => room.status === AlarmStatus.Active).length;
+  const activeAlarmsCount = rooms.filter(room => room.alarm.status === 'on').length;
   const safeRoomsCount = totalRooms - activeAlarmsCount;
 
   return (

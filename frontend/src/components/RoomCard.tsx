@@ -1,13 +1,14 @@
 import React from 'react';
-import { type Room, AlarmStatus } from '../types';
+import type { Room } from '../types';
 
 interface RoomCardProps {
   room: Room;
-  onDeactivate: (roomId: number) => void;
+  onDeactivate: (roomId: string) => void;
 }
 
 const RoomCard: React.FC<RoomCardProps> = ({ room, onDeactivate }) => {
-  const isActive = room.status === AlarmStatus.Active;
+  const isActive = room.alarm.status === 'on';
+  const roomType = room.type === 'room' ? "Stanza" : "Piscina"
 
   return (
     <div
@@ -23,7 +24,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onDeactivate }) => {
           title={`Stato: ${isActive ? 'Attivo' : 'Inattivo'}`}
         ></span>
         <span className="font-medium text-zinc-700 dark:text-zinc-300">
-          {room.name}
+          {roomType} {room.phone}
         </span>
       </div>
       {isActive && (
