@@ -1,12 +1,15 @@
-export const AlarmStatus = {
-  Inactive: 0,
-  Active: 1,
-} as const;
+export type AlarmStatus = 'on' | 'off'
 
-export type TypeAlarmStatus = typeof AlarmStatus[keyof typeof AlarmStatus];
+interface Alarm {
+  ip: string;
+  dev: string;
+  status: AlarmStatus;
+}
 
 export interface Room {
-  id: number;
-  name: string;
-  status: TypeAlarmStatus;
+  id: string;
+  type: string;
+  block: string;
+  phone: number;
+  alarm: Alarm;
 };
