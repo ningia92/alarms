@@ -30,6 +30,7 @@ wss.on('connection', ws => {
 // make the WebSocket server globally accessible in the app so it can be used in controllers
 app.set('wss', wss);
 
+app.use(express.json());
 app.use(cors());
 
 app.use('/api/v1/rooms', roomRouter);

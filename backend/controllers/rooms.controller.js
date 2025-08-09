@@ -42,7 +42,7 @@ export const getRooms = async (req, res) => {
 // @desc Get room
 // @route GET /api/v1/rooms/:id
 export const getRoom = async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
 
   // input validation of the room id
   if (!id.match(/^(\d)+-(\d)+$/g)) {
@@ -68,7 +68,8 @@ export const getRoom = async (req, res) => {
 // @desc Turn off room alarm
 // @route PATCH /api/v1/rooms/:id/alarm/
 export const turnOffAlarm = async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
+  const { status } = req.body;
 
   // input validation of the room id
   if (!id.match(/^(\d)+-(\d)+$/g)) {
@@ -85,14 +86,14 @@ export const turnOffAlarm = async (req, res) => {
     throw error;
   }
 
-  await redisClient.hSet(`room:${id}:alarm`, { status: 'off' });
+  await redisClient.hSet(`room:${id}:alarm`, { status });
 
-  const wss = req.app.get(wss);
-  wss.clients.forEach(client => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify({ type: 'alarm_status_changed', roomId: id, status: 'off' }));
-    }
-  });
+  // const wss = req.app.get(wss);
+  // wss.clients.forEach(client => {
+  //   if (client.readyState === WebSocket.OPEN) {
+  //     client.send(JSON.stringify({ type: 'alarm_status_changed', roomId: id, status }));
+  //   }
+  // });
 
   res.status(204).end();
 }
