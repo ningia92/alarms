@@ -1,4 +1,5 @@
-import { getRedisClient } from '../db/redis-client.js';
+import { getRedisClient } from '../models/redis-client.js';
+import WebSocket from 'ws';
 
 const redisClient = getRedisClient();
 
@@ -6,6 +7,7 @@ const redisClient = getRedisClient();
 // @route GET /stanza/:id/allarme/on
 export const turnOnAlarm = async (req, res) => {
   const id = req.params.id;
+  const status = 'on';
 
   // input validation of the room id
   if (!id.match(/^(\d)+-(\d)+$/g)) {
@@ -22,14 +24,16 @@ export const turnOnAlarm = async (req, res) => {
     throw error;
   }
 
-  await redisClient.hSet(`room:${id}:alarm`, { status: 'on' });
+  await redisClient.hSet(`room:${id}:alarm`, { status });
 
-  const wss = req.app.get('wss');
-  wss.clients.forEach(client => {
+  // send web socket message to all connected clients
+  const message = JSON.stringify({ type: 'alarm_triggered', roomId: id, status });
+
+  req.wsClients.forEach(client => {
     if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify({ type: 'alarm_status_changed', roomId: id, status: 'on' }));
+      client.send(message);
     }
-  });
+  })
 
   // set these response headers to mitigate the problem of the caching caused by the unsafe GET
   // Cache-Control: no-store indicates that any caches of any kind (private or shared) should

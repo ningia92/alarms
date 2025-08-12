@@ -1,4 +1,4 @@
-import { getRedisClient } from '../db/redis-client.js';
+import { getRedisClient } from '../models/redis-client.js';
 
 const redisClient = getRedisClient();
 
@@ -13,7 +13,7 @@ export const getRooms = async (req, res) => {
     throw error;
   }
 
-  // scan was used istead of keys (await redisClient.keys('room:*'))
+  // scan was used istead of keys (redisClient.keys('room:*'))
   // because keys is not recommended for production use
   const keyList = [];
   for await (const keys of redisClient.scanIterator({ MATCH: 'room:*' }))
@@ -88,13 +88,12 @@ export const turnOffAlarm = async (req, res) => {
 
   await redisClient.hSet(`room:${id}:alarm`, { status });
 
-  // const wss = req.app.get(wss);
-  // wss.clients.forEach(client => {
-  //   if (client.readyState === WebSocket.OPEN) {
-  //     client.send(JSON.stringify({ type: 'alarm_status_changed', roomId: id, status }));
-  //   }
-  // });
+  const wss = req.app.get(wss);
+  wss.clients.forEach(client => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify({ type: 'alarm_changed', roomId: id, status }));
+    }
+  });
 
   res.status(204).end();
 }
-

@@ -5,4 +5,4 @@
 node_modules/
 
 # DB data
-utils/data.json
+db/data.json
