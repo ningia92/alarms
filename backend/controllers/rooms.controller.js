@@ -1,4 +1,4 @@
-import { getRedisClient } from '../models/redis-client.js';
+import { getRedisClient } from '../db/redis-client.js';
 
 const redisClient = getRedisClient();
 

@@ -2,10 +2,10 @@ import express from 'express';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
 import cors from 'cors';
-import alarmDeviceRouter from './routes/alarm-devices.route.js';
 import { notFound, errorHandler } from './middleware/error-handling.js';
-import { getRoomList } from './models/get-room-list.js';
-import { turnOffAlarm } from './models/turn-off-alarm.js';
+import alarmDeviceRouter from './routes/alarm-devices.route.js';
+import { getRoomListService } from './services/room-service.js';
+import { setAlarmToOff } from './services/alarm-service.js';
 
 const app = express();
 // create an HTTP server to pass express app
@@ -19,7 +19,7 @@ wss.on('connection', async ws => {
   console.log('WebSocket client connected');
 
   try {
-    const roomList = await getRoomList();
+    const roomList = await getRoomListService();
     ws.send(JSON.stringify({ type: 'room_list', rooms: roomList }));
   } catch (err) {
     console.error('Error retrieving data from db', err);
@@ -29,12 +29,12 @@ wss.on('connection', async ws => {
   ws.on('message', async (message) => {
     const msg = JSON.parse(message);
 
-    if (msg.type === 'turnoff_alarm' && msg.roomId) {
-      await turnOffAlarm(msg.roomId);
+    if (msg.type === 'alarm_off' && msg.roomId) {
+      await setAlarmToOff(msg.roomId);
 
       wss.clients.forEach(async client => {
         if (client.readyState === WebSocket.OPEN) {
-          const roomList = await getRoomList();
+          const roomList = await getRoomListService();
           client.send(JSON.stringify({ type: 'room_list', rooms: roomList }));
         }
       })

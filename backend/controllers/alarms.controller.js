@@ -1,13 +1,10 @@
-import { getRedisClient } from '../models/redis-client.js';
+import { setAlarmToOn } from '../services/alarm-service.js';
 import WebSocket from 'ws';
-
-const redisClient = getRedisClient();
 
 // @desc Turn on alarm
 // @route GET /stanza/:id/allarme/on
 export const turnOnAlarm = async (req, res) => {
   const id = req.params.id;
-  const status = 'on';
 
   // input validation of the room id
   if (!id.match(/^(\d)+-(\d)+$/g)) {
@@ -16,18 +13,10 @@ export const turnOnAlarm = async (req, res) => {
     throw error;
   }
 
-  const room = await redisClient.exists(`room:${id}`);
-
-  if (!room) {
-    const error = new Error('Room not found');
-    error.statusCode = 404;
-    throw error;
-  }
-
-  await redisClient.hSet(`room:${id}:alarm`, { status });
+  await setAlarmToOn(id);
 
   // send web socket message to all connected clients
-  const message = JSON.stringify({ type: 'alarm_triggered', roomId: id, status });
+  const message = JSON.stringify({ type: 'alarm_on', roomId: id, status: 'on' });
 
   req.wsClients.forEach(client => {
     if (client.readyState === WebSocket.OPEN) {
