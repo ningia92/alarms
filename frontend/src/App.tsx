@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import type { Room } from './types';
 import Header from './components/Header';
 import Summary from './components/Summary';
@@ -9,6 +8,7 @@ import RoomList from './components/RoomList';
 const App: React.FC = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+  const [webSocket, setWebSocket] = useState<WebSocket>();
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -25,22 +25,45 @@ const App: React.FC = () => {
   const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3000/api/v1/rooms')
-      .then(response => setRooms(response.data))
-      .catch(err => console.error(err));
+    const ws = new WebSocket('ws://localhost:3000');
+    setWebSocket(ws);
+    
+    ws.onopen = () => console.log('Connected to WS Server');
+
+    ws.onmessage = event => {
+      try {
+        const msg = JSON.parse(event.data);
+
+        if (msg.type === 'room_list' && msg.rooms) {
+          setRooms(msg.rooms);
+        } else if (msg.type === 'room_updated' && msg.room) {
+          setRooms(prev => prev.map(room => room.id === msg.room.id ? msg.room : room));
+        } else if (msg.type === 'alarm_triggered' && msg.roomId) {
+          setRooms(prev => prev.map(room => {
+            return room.id === msg.roomId
+              ? { ...room, alarm: { ...room.alarm, status: msg.status } } : room;
+          }));
+        } else if (msg.type === 'error') {
+          console.log(msg.info);
+        }
+      } catch (err) {
+        console.error('Invalid WS message', err);
+      }
+    };
+
+    ws.onclose = () => {
+      console.log('Connection to WS Server closed');
+    };
+
+    ws.onerror = (err) => console.error('WS error', err);
   }, []);
 
   const handleTurnOffAlarm = (roomId: string) => {
-    axios
-      .patch(`http://localhost:3000/api/v1/rooms/${roomId}/alarm`, { status: 'off' })
-      .then(() => {
-        setRooms(rooms => rooms.map(room => {
-          return room.id === roomId
-            ? { ...room, alarm: { ...room.alarm, status: 'off' } }
-            : room
-        }))
-      })
+    const message = { type: 'turnoff_alarm', roomId };
+    
+    if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+      webSocket.send(JSON.stringify(message));
+    }
   }
 
   return (
