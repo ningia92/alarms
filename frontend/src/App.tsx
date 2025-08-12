@@ -38,7 +38,7 @@ const App: React.FC = () => {
           setRooms(msg.rooms);
         } else if (msg.type === 'room_updated' && msg.room) {
           setRooms(prev => prev.map(room => room.id === msg.room.id ? msg.room : room));
-        } else if (msg.type === 'alarm_triggered' && msg.roomId) {
+        } else if (msg.type === 'alarm_on' && msg.roomId) {
           setRooms(prev => prev.map(room => {
             return room.id === msg.roomId
               ? { ...room, alarm: { ...room.alarm, status: msg.status } } : room;
@@ -59,8 +59,8 @@ const App: React.FC = () => {
   }, []);
 
   const handleTurnOffAlarm = (roomId: string) => {
-    const message = { type: 'turnoff_alarm', roomId };
-    
+    const message = { type: 'alarm_off', roomId };
+
     if (webSocket && webSocket.readyState === WebSocket.OPEN) {
       webSocket.send(JSON.stringify(message));
     }
