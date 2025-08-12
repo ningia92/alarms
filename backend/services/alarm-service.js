@@ -18,10 +18,14 @@ export const setAlarmToOff = async (id) => {
     throw error;
   }
 
-  await redisClient.hSet(`room:${id}:alarm`, { status: 'off' });
+  try {
+    await redisClient.hSet(`room:${id}:alarm`, { status: 'off' });
+  } catch (err) {
+    console.error('Error while setting alarm status to off', err);
+  }
 }
 
-export const setAlarmToOn = async (id, status) => {
+export const setAlarmToOn = async (id) => {
   const room = await redisClient.exists(`room:${id}`);
 
   if (!room) {
@@ -30,5 +34,9 @@ export const setAlarmToOn = async (id, status) => {
     throw error;
   }
 
-  await redisClient.hSet(`room:${id}:alarm`, { status });
+  try {
+    await redisClient.hSet(`room:${id}:alarm`, { status: 'on' });
+  } catch (err) {
+    console.error('Error while setting alarm status to on', err);
+  }
 }
