@@ -1,11 +1,11 @@
 import { getRoomList } from '../../services/room-service.js';
-import { setAlarmToOn, setAlarmToOff } from '../../services/alarm-service.js';
+import { setAlarmStatus } from '../../services/alarm-service.js';
 
 export const handleAlarmOn = async (wss, roomId) => {
   const message = JSON.stringify({ type: 'alarm_on', roomId, status: 'on' });
 
   if (roomId) {
-    await setAlarmToOn(roomId);
+    await setAlarmStatus(roomId, 'on');
 
     wss.clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
@@ -24,7 +24,7 @@ export const handleAlarmOff = async (wss, message) => {
   const { roomId } = message;
 
   if (roomId) {
-    await setAlarmToOff(roomId);
+    await setAlarmStatus(roomId, 'off');
 
     wss.clients.forEach(async client => {
       if (client.readyState === WebSocket.OPEN) {

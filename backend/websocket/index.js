@@ -8,7 +8,7 @@ export const initializeWebSocketServer = (server) => {
   wss.on('connection', async (ws) => {
     console.log('WebSocket client connected');
 
-    // send intial list of rooms to the new web socket client
+    // send room list to the newly connected web socket client
     try {
       const roomList = await getRoomList();
       ws.send(JSON.stringify({ type: 'room_list', rooms: roomList }));

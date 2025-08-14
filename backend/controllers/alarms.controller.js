@@ -1,4 +1,4 @@
-import { setAlarmToOn } from '../services/alarm-service.js';
+import { setAlarmStatus } from '../services/alarm-service.js';
 import { handleAlarmOn } from '../websocket/handlers/alarm-handler.js';
 
 // @desc Turn on alarm
@@ -13,7 +13,7 @@ export const turnOnAlarm = async (req, res) => {
     throw error;
   }
 
-  await setAlarmToOn(id);
+  await setAlarmStatus(id, 'on');
 
   handleAlarmOn(req.wss, id);
 

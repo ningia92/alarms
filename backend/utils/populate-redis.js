@@ -1,5 +1,5 @@
 import { getRedisClient } from '../db/redis-client.js';
-import rooms from './data.json' with { type: 'json' };
+import rooms from '../db/data.json' with { type: 'json' };
 
 const redisClient = getRedisClient();
 
