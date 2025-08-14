@@ -2,7 +2,7 @@ import { getRedisClient } from '../db/redis-client.js';
 
 const redisClient = getRedisClient();
 
-export const setAlarmStatus = async (id, status) => {
+export const setAlarmStatus = async (id, status, timestamp) => {
   // input validation of the room id
   if (!id.match(/^(\d)+-(\d)+$/g)) {
     const error = new Error('Bad request');
@@ -10,7 +10,7 @@ export const setAlarmStatus = async (id, status) => {
     throw error;
   }
 
-  const room = redisClient.exists(`room:${id}`);
+  const room = await redisClient.exists(`room:${id}`);
 
   if (!room) {
     const error = new Error('Room not found');
@@ -19,7 +19,7 @@ export const setAlarmStatus = async (id, status) => {
   }
 
   try {
-    await redisClient.hSet(`room:${id}:alarm`, { status });
+    await redisClient.hSet(`room:${id}:alarm`, { status: `${status}`, lastUpdate: `${timestamp}` });
   } catch (err) {
     console.error(`Error while setting alarm status to ${status}`, err);
   }

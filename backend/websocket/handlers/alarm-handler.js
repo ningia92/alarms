@@ -1,8 +1,8 @@
 import { getRoomList } from '../../services/room-service.js';
 import { setAlarmStatus } from '../../services/alarm-service.js';
 
-export const handleAlarmOn = async (wss, roomId) => {
-  const message = JSON.stringify({ type: 'alarm_on', roomId, status: 'on' });
+export const handleAlarmOn = async (wss, roomId, timestamp) => {
+  const message = JSON.stringify({ type: 'alarm_on', roomId, status: 'on', lastUpdate: timestamp });
 
   if (roomId) {
     await setAlarmStatus(roomId, 'on');
@@ -12,7 +12,7 @@ export const handleAlarmOn = async (wss, roomId) => {
         try {
           client.send(message);
         } catch (err) {
-          console.error('Error sending alarm status', err);
+          console.error('Error while sending alarm trigger web socket message', err);
           client.send(JSON.stringify({ type: 'error', info: 'Unable to retrieve alarm status' }));
         }
       }
@@ -21,10 +21,10 @@ export const handleAlarmOn = async (wss, roomId) => {
 }
 
 export const handleAlarmOff = async (wss, message) => {
-  const { roomId } = message;
+  const { roomId, timestamp } = message;
 
   if (roomId) {
-    await setAlarmStatus(roomId, 'off');
+    await setAlarmStatus(roomId, 'off', timestamp);
 
     wss.clients.forEach(async client => {
       if (client.readyState === WebSocket.OPEN) {
@@ -32,8 +32,8 @@ export const handleAlarmOff = async (wss, message) => {
           const roomList = await getRoomList();
           client.send(JSON.stringify({ type: 'room_list', rooms: roomList }));
         } catch (err) {
-          console.error('Error sending updated room list', err);
-          client.send(JSON.stringify({ type: 'error', info: 'Unable to retrieve data' }));
+          console.error('Error while sending updated room list after the alarm has been turned off', err);
+          client.send(JSON.stringify({ type: 'error', info: 'Unable to retrieve room list' }));
         }
       }
     })

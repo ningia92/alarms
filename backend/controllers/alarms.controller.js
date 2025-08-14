@@ -5,6 +5,7 @@ import { handleAlarmOn } from '../websocket/handlers/alarm-handler.js';
 // @route GET /stanza/:id/allarme/on
 export const turnOnAlarm = async (req, res) => {
   const id = req.params.id;
+  const timestamp = new Date().toISOString();
 
   // input validation of the room id
   if (!id.match(/^(\d)+-(\d)+$/g)) {
@@ -13,9 +14,11 @@ export const turnOnAlarm = async (req, res) => {
     throw error;
   }
 
-  await setAlarmStatus(id, 'on');
+  // set status field of alarm to on into redis db
+  await setAlarmStatus(id, 'on', timestamp);
 
-  handleAlarmOn(req.wss, id);
+  // alarm handler that send web socket message to client when an alarm is on
+  await handleAlarmOn(req.wss, id, timestamp);
 
   // set these response headers to mitigate the problem of the caching caused by the unsafe GET
   // Cache-Control: no-store indicates that any caches of any kind (private or shared) should
