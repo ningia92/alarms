@@ -1,5 +1,4 @@
-import React from 'react';
-// import axios from 'axios';
+import React, { useMemo } from 'react';
 import type { Room } from '../types';
 import BellIcon from './icons/BellIcon';
 
@@ -9,7 +8,12 @@ interface ActiveAlarmsProps {
 }
 
 const ActiveAlarms: React.FC<ActiveAlarmsProps> = ({ rooms, onTurnOff }) => {
-  const activeAlarms = rooms.filter(room => room.alarm.status === 'on');
+  const activeAlarms = useMemo(() => {
+    return rooms
+      .filter(room => room.alarm.status === 'on')
+      .sort((room1, room2) =>
+        new Date(room2.alarm.lastUpdate).valueOf() - new Date(room1.alarm.lastUpdate).valueOf())
+  }, [rooms]);
 
   return (
     <section>

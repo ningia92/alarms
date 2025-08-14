@@ -4,6 +4,7 @@ interface Alarm {
   ip: string;
   dev: string;
   status: AlarmStatus;
+  lastUpdate: Date;
 }
 
 export interface Room {

@@ -36,12 +36,17 @@ const App: React.FC = () => {
 
         if (msg.type === 'room_list' && msg.rooms) {
           setRooms(msg.rooms);
-        } else if (msg.type === 'room_updated' && msg.room) {
-          setRooms(prev => prev.map(room => room.id === msg.room.id ? msg.room : room));
         } else if (msg.type === 'alarm_on' && msg.roomId) {
-          setRooms(prev => prev.map(room => {
+          setRooms(rooms => rooms.map(room => {
             return room.id === msg.roomId
-              ? { ...room, alarm: { ...room.alarm, status: msg.status } } : room;
+              ? { ...room,
+                  alarm: { 
+                    ...room.alarm,
+                    status: msg.status,
+                    lastUpdate: new Date(msg.lastUpdate)
+                  }
+                }
+              : room;
           }));
         } else if (msg.type === 'error') {
           console.log(msg.info);
@@ -59,7 +64,7 @@ const App: React.FC = () => {
   }, []);
 
   const handleTurnOffAlarm = (roomId: string) => {
-    const message = { type: 'alarm_off', roomId };
+    const message = { type: 'alarm_off', roomId, lastUpdate: new Date().toISOString() };
 
     if (webSocket && webSocket.readyState === WebSocket.OPEN) {
       webSocket.send(JSON.stringify(message));
