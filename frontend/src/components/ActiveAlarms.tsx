@@ -36,10 +36,14 @@ const ActiveAlarms: React.FC<ActiveAlarmsProps> = ({ rooms, onTurnOff }) => {
                   {room.type === 'room' ? "Stanza" : "Piscina"} {room.phone}
                 </span>
 
-                <div className="flex items-center gap-4">
+                <div className="flex flex items-center gap-4">
                   <div className="flex items-center text-danger-500 dark:text-danger-400 animate-pulse">
                     <BellIcon className="w-5 h-5 mr-1.5" />
-                    <span className="text-sm font-semibold uppercase tracking-wider">ATTIVO</span>
+                    <span>
+                      {new Date(room.alarm.lastUpdate).getHours()}:
+                      {new Date(room.alarm.lastUpdate).getMinutes()}:
+                      {new Date(room.alarm.lastUpdate).getSeconds()}
+                    </span>
                   </div>
                   <button
                     onClick={() => onTurnOff(room.id)}
