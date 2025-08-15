@@ -1,4 +1,3 @@
-import { setAlarmStatus } from '../services/alarm-service.js';
 import { handleAlarmOn } from '../websocket/handlers/alarm-handler.js';
 
 // @desc Turn on alarm
@@ -14,10 +13,6 @@ export const turnOnAlarm = async (req, res) => {
     throw error;
   }
 
-  // set status field of alarm to on into redis db
-  await setAlarmStatus(id, 'on', timestamp);
-
-  // alarm handler that send web socket message to client when an alarm is on
   await handleAlarmOn(req.wss, id, timestamp);
 
   // set these response headers to mitigate the problem of the caching caused by the unsafe GET

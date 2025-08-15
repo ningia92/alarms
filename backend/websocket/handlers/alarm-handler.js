@@ -5,7 +5,8 @@ export const handleAlarmOn = async (wss, roomId, timestamp) => {
   const message = JSON.stringify({ type: 'alarm_on', roomId, status: 'on', lastUpdate: timestamp });
 
   if (roomId) {
-    await setAlarmStatus(roomId, 'on');
+    // set status field of alarm to on into redis db
+    await setAlarmStatus(roomId, 'on', timestamp);
 
     wss.clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
@@ -24,6 +25,7 @@ export const handleAlarmOff = async (wss, message) => {
   const { roomId, timestamp } = message;
 
   if (roomId) {
+    // set status field of alarm to off into redis db
     await setAlarmStatus(roomId, 'off', timestamp);
 
     wss.clients.forEach(async client => {
