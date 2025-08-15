@@ -1,0 +1,2 @@
+15/08/2025, 12:47:34 [ Stanza 11-08 ] => on (Allarme attivato)
+15/08/2025, 12:47:45 [ Stanza 11-08 ] => off (Allarme disattivato)
