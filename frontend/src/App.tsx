@@ -6,9 +6,9 @@ import ActiveAlarms from './components/ActiveAlarms';
 import RoomList from './components/RoomList';
 
 const App: React.FC = () => {
+  const [webSocket, setWebSocket] = useState<WebSocket>();
   const [rooms, setRooms] = useState<Room[]>([]);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
-  const [webSocket, setWebSocket] = useState<WebSocket>();
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -27,8 +27,6 @@ const App: React.FC = () => {
   useEffect(() => {
     const ws = new WebSocket('ws://localhost:3000');
     setWebSocket(ws);
-    
-    ws.onopen = () => console.log('Connected to WS Server');
 
     ws.onmessage = event => {
       try {
@@ -39,28 +37,27 @@ const App: React.FC = () => {
         } else if (msg.type === 'alarm_on' && msg.roomId) {
           setRooms(rooms => rooms.map(room => {
             return room.id === msg.roomId
-              ? { ...room,
-                  alarm: { 
-                    ...room.alarm,
-                    status: msg.status,
-                    lastUpdate: new Date(msg.lastUpdate)
-                  }
+              ? {
+                ...room,
+                alarm: {
+                  ...room.alarm,
+                  status: msg.status,
+                  lastUpdate: new Date(msg.lastUpdate)
                 }
+              }
               : room;
           }));
         } else if (msg.type === 'error') {
           console.log(msg.info);
         }
       } catch (err) {
-        console.error('Invalid WS message', err);
+        console.error('Invalid WebSocket message', err);
       }
     };
 
-    ws.onclose = () => {
-      console.log('Connection to WS Server closed');
-    };
+    ws.onerror = (err) => console.error('WebSocket error', err);
 
-    ws.onerror = (err) => console.error('WS error', err);
+    ws.onclose = () => console.log('Connection to WebSocket Server closed');
   }, []);
 
   const handleTurnOffAlarm = (roomId: string) => {

@@ -28,6 +28,6 @@ export const setAlarmStatus = async (id, status, lastUpdate) => {
   // write logs
   const roomType = await redisClient.hGet(`room:${id}`, 'type');
   const formatDate = new Date(lastUpdate).toLocaleString();
-  const log = `${formatDate} [ ${roomType === 'room'? 'Stanza ' + id : 'Piscina'} ] => ${status} (${status === 'on' ? 'Allarme attivato' : 'Allarme disattivato'})\n`;
+  const log = `${formatDate} [ ${roomType === 'room'? 'Room ' + id : 'Pool'} ] => ${status} (${status === 'on' ? 'Alarm activated' : 'Alarm deactivated'})\n`;
   await writeLogs(log);
 }

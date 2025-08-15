@@ -29,6 +29,8 @@ export const initializeWebSocketServer = (server) => {
       }
     });
 
+    ws.on('error', (err) => console.error('WebSocket Error', err));
+
     ws.on('close', () => {
       console.log('WebSocket client disconnected');
     });
