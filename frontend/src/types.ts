@@ -5,6 +5,7 @@ interface Alarm {
   dev: string;
   status: AlarmStatus;
   lastUpdate: Date;
+  lastActivation: Date;
 }
 
 export interface Room {

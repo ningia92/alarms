@@ -33,16 +33,14 @@ const ActiveAlarms: React.FC<ActiveAlarmsProps> = ({ rooms, onTurnOff }) => {
                 className="flex items-center justify-between p-4 bg-danger-50 dark:bg-danger-500/10 rounded-lg"
               >
                 <span className="text-lg font-bold text-danger-700 dark:text-danger-200">
-                  {room.type === 'room' ? "Stanza" : "Piscina"} {room.phone}
+                  {room.type === 'room' ? "Stanza" : "Piscina"} {room.id}
                 </span>
 
                 <div className="flex flex items-center gap-4">
                   <div className="flex items-center text-danger-500 dark:text-danger-400 animate-pulse">
                     <BellIcon className="w-5 h-5 mr-1.5" />
                     <span>
-                      {new Date(room.alarm.lastUpdate).getHours()}:
-                      {new Date(room.alarm.lastUpdate).getMinutes()}:
-                      {new Date(room.alarm.lastUpdate).getSeconds()}
+                      {new Date(room.alarm.lastUpdate).toLocaleString().split(' ')[1]}
                     </span>
                   </div>
                   <button
