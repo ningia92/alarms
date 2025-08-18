@@ -3,7 +3,7 @@ import { writeLogs } from '../utils/write-logs.js';
 
 const redisClient = getRedisClient();
 
-// function that writes data on Redis db and writes logs
+// function that writes data on Redis db and writes logs on .txt file
 export const setAlarmStatus = async (id, status, lastStatusChange) => {
   // input validation of the room id
   if (!id.match(/^(\d)+-(\d)+$/g)) {

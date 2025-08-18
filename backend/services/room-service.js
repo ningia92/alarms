@@ -1,4 +1,5 @@
 import { getRedisClient } from '../db/redis-client.js';
+import fetch from 'node-fetch';
 
 const redisClient = getRedisClient();
 
@@ -23,4 +24,44 @@ export const getRoomList = async () => {
   }));
 
   return expandedRooms;
+}
+
+const getRoomNumber = async (roomId) => {
+  try {
+    return await redisClient.hGet(`room:${roomId}`, 'number');
+  } catch (err) {
+    console.error('Error during get the telephone number of the room', err);
+  }
+}
+
+// function that call the room, through API Wildix PBX, when the alarm is turned on
+export const callRoom = async (roomId) => {
+  const url = ''; // process.env.PBX_URL;
+  const username = ''; // process.env.PBX_USER;
+  const password = ''; // process.env.PBX_PWD;
+  const number = getRoomNumber(roomId);
+
+  const credentials = Buffer.from(`${username}:${password}`).toString('base64');
+  const params = new URLSearchParams({ number }).toString();
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${credentials}`,
+        'Content-type': 'application/x-www-urlencoded'
+      },
+      body: params
+    });
+
+    const responseText = await response.text();
+
+    if (response.status !== 200) {
+      console.error('Wildix API call error', response.status, responseText);
+    } else {
+      console.log('Wildix API call OK');
+    }
+  } catch (err) {
+    console.error('Error during the API Wildix PBX call', err);
+  }
 }
