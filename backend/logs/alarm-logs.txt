@@ -4,3 +4,8 @@
 18/08/2025, 11:14:55 [ Room 11-02 ] => on (Alarm activated)
 18/08/2025, 11:15:12 [ Room 11-02 ] => off (Alarm deactivated)
 18/08/2025, 11:15:22 [ Room 12-10 ] => off (Alarm deactivated)
+18/08/2025, 18:22:39 [ Room 11-02 ] => on (Alarm activated)
+18/08/2025, 18:22:55 [ Room 11-02 ] => on (Alarm activation repeated)
+18/08/2025, 18:23:09 [ Room 11-02 ] => on (Alarm activation repeated)
+18/08/2025, 18:23:11 [ Room 11-02 ] => on (Alarm activation repeated)
+18/08/2025, 18:23:21 [ Room 11-02 ] => off (Alarm deactivated)
