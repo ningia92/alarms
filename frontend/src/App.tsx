@@ -42,7 +42,7 @@ const App: React.FC = () => {
                 alarm: {
                   ...room.alarm,
                   status: msg.status,
-                  lastUpdate: new Date(msg.lastUpdate)
+                  lastActivation: new Date(msg.lastActivation)
                 }
               }
               : room;
@@ -61,7 +61,7 @@ const App: React.FC = () => {
   }, []);
 
   const handleTurnOffAlarm = (roomId: string) => {
-    const message = { type: 'alarm_off', roomId, lastUpdate: new Date().toISOString() };
+    const message = { type: 'alarm_off', roomId };
 
     if (webSocket && webSocket.readyState === WebSocket.OPEN) {
       webSocket.send(JSON.stringify(message));

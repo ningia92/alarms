@@ -12,7 +12,7 @@ const ActiveAlarms: React.FC<ActiveAlarmsProps> = ({ rooms, onTurnOff }) => {
     return rooms
       .filter(room => room.alarm.status === 'on')
       .sort((room1, room2) =>
-        new Date(room2.alarm.lastUpdate).valueOf() - new Date(room1.alarm.lastUpdate).valueOf())
+        new Date(room2.alarm.lastActivation).valueOf() - new Date(room1.alarm.lastActivation).valueOf())
   }, [rooms]);
 
   return (
@@ -40,7 +40,7 @@ const ActiveAlarms: React.FC<ActiveAlarmsProps> = ({ rooms, onTurnOff }) => {
                   <div className="flex items-center text-danger-500 dark:text-danger-400 animate-pulse">
                     <BellIcon className="w-5 h-5 mr-1.5" />
                     <span>
-                      {new Date(room.alarm.lastUpdate).toLocaleString().split(' ')[1]}
+                      {new Date(room.alarm.lastActivation).toLocaleString().split(' ')[1]}
                     </span>
                   </div>
                   <button
