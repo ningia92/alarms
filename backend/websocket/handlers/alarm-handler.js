@@ -1,12 +1,12 @@
 import { getRoomList } from '../../services/room-service.js';
 import { setAlarmStatus } from '../../services/alarm-service.js';
 
-export const handleAlarmOn = async (wss, roomId, lastUpdate) => {
-  const message = JSON.stringify({ type: 'alarm_on', roomId, status: 'on', lastUpdate });
+export const handleAlarmOn = async (wss, roomId, lastActivation) => {
+  const message = JSON.stringify({ type: 'alarm_on', roomId, status: 'on', lastActivation });
 
   if (roomId) {
     // set status field of alarm to on into redis db
-    await setAlarmStatus(roomId, 'on', lastUpdate);
+    await setAlarmStatus(roomId, 'on', lastActivation);
 
     wss.clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
@@ -22,11 +22,13 @@ export const handleAlarmOn = async (wss, roomId, lastUpdate) => {
 }
 
 export const handleAlarmOff = async (wss, message) => {
-  const { roomId, lastUpdate } = message;
+  const { roomId } = message;
+  const lastDeactivation = new Date().toISOString();
 
   if (roomId) {
-    // set status field of alarm to off into redis db
-    await setAlarmStatus(roomId, 'off', lastUpdate);
+    // set status field of the alarm to off into redis db
+    // lastDeactivation is used only for logs
+    await setAlarmStatus(roomId, 'off', lastDeactivation);
 
     wss.clients.forEach(async client => {
       if (client.readyState === WebSocket.OPEN) {

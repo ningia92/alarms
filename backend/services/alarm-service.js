@@ -3,7 +3,8 @@ import { writeLogs } from '../utils/write-logs.js';
 
 const redisClient = getRedisClient();
 
-export const setAlarmStatus = async (id, status, lastUpdate) => {
+// function that writes data on Redis db and writes logs
+export const setAlarmStatus = async (id, status, lastStatusChange) => {
   // input validation of the room id
   if (!id.match(/^(\d)+-(\d)+$/g)) {
     const error = new Error('Bad request');
@@ -19,45 +20,24 @@ export const setAlarmStatus = async (id, status, lastUpdate) => {
     throw error;
   }
 
+  // if status is on, set lastActivation of the alarm to lastStatusChange
   try {
-    await redisClient.hSet(`room:${id}:alarm`,
-      {
-        status: `${status}`,
-        lastUpdate: `${lastUpdate}`
-      });
+    if (status === 'on') {
+      await redisClient.hSet(`room:${id}:alarm`,
+        {
+          status: `${status}`,
+          lastActivation: `${lastStatusChange}`
+        });
+    } else {
+      await redisClient.hSet(`room:${id}:alarm`, { status: `${status}` });
+    }
   } catch (err) {
     console.error(`Error while setting alarm status to ${status}`, err);
   }
 
-  // get last alarm activation
-  const lastActivation = await redisClient.hGet(`room:${id}:alarm`, 'lastActivation');
-
-  // when an alarm is turned on and the last alarm activation is empty,
-  // set the last activation time to the last update time
-  // this ensures that when the alarm is turned on, the penultimate alarm is shown and
-  // not the current one
-  if (status === 'on' && !lastActivation) {
-    try {
-      await redisClient.hSet(`room:${id}:alarm`, { lastActivation: `${lastUpdate}` });
-    } catch (err) {
-      console.error('Error while setting last alarm activation', err);
-    }
-  }
-
-  // when and alarm is turned off and the last alarm activation is not empty,
-  // set the last activation time to the last update time
-  // this ensures that the last activation is always shown when the alarm is turned off
-  if (status === 'off' && lastActivation) {
-    try {
-      await redisClient.hSet(`room:${id}:alarm`, { lastActivation: `${lastUpdate}` });
-    } catch (err) {
-      console.error('Error while setting last alarm activation', err);
-    }
-  }
-
-  // write logs
+  // write logs for activation/deactivation of the alarms
   const roomType = await redisClient.hGet(`room:${id}`, 'type');
-  const formatDate = new Date(lastUpdate).toLocaleString();
+  const formatDate = new Date(lastStatusChange).toLocaleString();
   const log = `${formatDate} [ ${roomType === 'room' ? 'Room ' + id : 'Pool'} ] => ${status} (${status === 'on' ? 'Alarm activated' : 'Alarm deactivated'})\n`;
   await writeLogs(log);
 }
