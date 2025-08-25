@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import type { Room } from './types';
 import Header from './components/Header';
 import Summary from './components/Summary';
@@ -6,9 +6,11 @@ import ActiveAlarms from './components/ActiveAlarms';
 import RoomList from './components/RoomList';
 
 const App: React.FC = () => {
-  const [webSocket, setWebSocket] = useState<WebSocket>();
   const [rooms, setRooms] = useState<Room[]>([]);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+
+  // utilize useRef to mantain the WebSocket instance without re-render
+  const webSocket = useRef<WebSocket | null>(null);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -25,46 +27,73 @@ const App: React.FC = () => {
   const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:3000');
-    setWebSocket(ws);
+    // function that establishes the connection to server
+    const connect = () => {
+      const ws = new WebSocket('ws://localhost:3000');
+      // setWebSocket(ws);
 
-    ws.onmessage = event => {
-      try {
-        const msg = JSON.parse(event.data);
-
-        if (msg.type === 'room_list' && msg.rooms) {
-          setRooms(msg.rooms);
-        } else if (msg.type === 'alarm_on' && msg.roomId) {
-          setRooms(rooms => rooms.map(room => {
-            return room.id === msg.roomId
-              ? {
-                ...room,
-                alarm: {
-                  ...room.alarm,
-                  status: msg.status,
-                  lastActivation: new Date(msg.lastActivation)
-                }
-              }
-              : room;
-          }));
-        } else if (msg.type === 'error') {
-          console.log(msg.info);
-        }
-      } catch (err) {
-        console.error('Invalid WebSocket message', err);
+      ws.onopen = () => {
+        console.log('Connected to WebSocket Server');
       }
+
+      ws.onmessage = event => {
+        try {
+          const msg = JSON.parse(event.data);
+
+          if (msg.type === 'room_list' && msg.rooms) {
+            setRooms(msg.rooms);
+          } else if (msg.type === 'alarm_on' && msg.roomId) {
+            setRooms(rooms => rooms.map(room => {
+              return room.id === msg.roomId
+                ? {
+                  ...room,
+                  alarm: {
+                    ...room.alarm,
+                    status: msg.status,
+                    lastActivation: new Date(msg.lastActivation)
+                  }
+                }
+                : room;
+            }));
+          } else if (msg.type === 'error') {
+            console.log(msg.info);
+          }
+        } catch (err) {
+          console.error('Invalid WebSocket message', err);
+        }
+      };
+
+      ws.onerror = (err) => console.error('WebSocket error', err);
+
+      // when the connection is closed, try to reconnect after 3 seconds
+      // the timeout is used to avoid overloading the server
+      ws.onclose = () => {
+        console.log('Connection to WebSocket Server closed. Reconnecting...');
+
+        setTimeout(() => {
+          connect();
+        }, 3000);
+      };
+
+      // save the instance in the ref
+      webSocket.current = ws;
     };
 
-    ws.onerror = (err) => console.error('WebSocket error', err);
+    connect();
 
-    ws.onclose = () => console.log('Connection to WebSocket Server closed');
+    // clean function: closes the connection when the component is disassembled
+    return () => {
+      if (webSocket.current && webSocket.current.readyState === WebSocket.OPEN) {
+        webSocket.current.close();
+      }
+    }
   }, []);
 
   const handleTurnOffAlarm = (roomId: string) => {
     const message = { type: 'alarm_off', roomId };
 
-    if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-      webSocket.send(JSON.stringify(message));
+    if (webSocket.current && webSocket.current.readyState === WebSocket.OPEN) {
+      webSocket.current.send(JSON.stringify(message));
     }
   }
 
