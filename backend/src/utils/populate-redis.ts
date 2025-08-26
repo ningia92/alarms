@@ -1,5 +1,5 @@
-import { getRedisClient } from '../db/redis-client.js';
 import rooms from '../db/data.json' with { type: 'json' };
+import { getRedisClient } from '../db/redis-client.js';
 
 const redisClient = getRedisClient();
 
@@ -12,12 +12,11 @@ const loadData = async () => {
   console.log('Loading data...');
   for (const room of rooms) {
     const id = room.id;
-    const alarm = room['alarm'];
+    const alarm: Alarm = room.alarm;
+    const roomWithAlarmKey: RedisRoomHash = { ...room, alarm: `room:${id}:alarm` };
 
-    room['alarm'] = `room:${id}:alarm`;
-
-    await redisClient.hSet(`room:${id}`, room);
-    await redisClient.hSet(`room:${id}:alarm`, alarm);
+    await redisClient.hSet(`room:${id}`, { ...roomWithAlarmKey });
+    await redisClient.hSet(`room:${id}:alarm`, { ...alarm });
   }
 }
 
@@ -33,4 +32,4 @@ const runDataLoader = async () => {
   }
 }
 
-runDataLoader();
+await runDataLoader();

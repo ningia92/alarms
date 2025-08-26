@@ -1,8 +1,17 @@
-import { getRoomList, callRoom } from '../../services/room-service.js';
-import { setAlarmStatus } from '../../services/alarm-service.js';
+import { WebSocketServer } from 'ws';
 
-export const handleAlarmOn = async (wss, roomId, lastActivation) => {
-  const message = JSON.stringify({ type: 'alarm_on', roomId, status: 'on', lastActivation });
+import { setAlarmStatus } from '../../services/alarm-service.js';
+import { callRoom, getRoomList } from '../../services/room-service.js';
+
+export const handleAlarmOn = async (wss: WebSocketServer, roomId: string, lastActivation: string) => {
+  const message: AlarmOnMessage = {
+    type: 'alarm_on',
+    roomId,
+    status: 'on',
+    lastActivation
+  };
+
+  const strMessage = JSON.stringify(message);
 
   if (roomId) {
     // make the call to the room that activeted the alarm
@@ -14,17 +23,20 @@ export const handleAlarmOn = async (wss, roomId, lastActivation) => {
     wss.clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
         try {
-          client.send(message);
+          client.send(strMessage);
         } catch (err) {
           console.error('Error while sending web socket message to clients', err);
-          client.send(JSON.stringify({ type: 'error', info: 'Unable to retrieve alarm status' }));
+          client.send(JSON.stringify({
+            type: 'error',
+            info: 'Unable to retrieve alarm status'
+          }));
         }
       }
     })
   }
 }
 
-export const handleAlarmOff = async (wss, message) => {
+export const handleAlarmOff = async (wss: WebSocketServer, message: AlarmOffMessage) => {
   const { roomId } = message;
   const lastDeactivation = new Date().toISOString();
 
@@ -33,16 +45,20 @@ export const handleAlarmOff = async (wss, message) => {
     // lastDeactivation is used only for logs
     await setAlarmStatus(roomId, 'off', lastDeactivation);
 
-    wss.clients.forEach(async client => {
+    for (const client of wss.clients) {
       if (client.readyState === WebSocket.OPEN) {
         try {
           const roomList = await getRoomList();
           client.send(JSON.stringify({ type: 'room_list', rooms: roomList }));
         } catch (err) {
           console.error('Error while sending web socket message to clients', err);
-          client.send(JSON.stringify({ type: 'error', info: 'Unable to retrieve room list' }));
+          client.send(JSON.stringify({
+            type: 'error',
+            info: 'Unable to retrieve room list'
+          }));
         }
       }
-    })
+
+    }
   }
 }

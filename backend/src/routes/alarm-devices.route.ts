@@ -1,4 +1,5 @@
 import { Router } from 'express';
+
 import { turnOnAlarm } from '../controllers/alarms.controller.js';
 import { authorizeDevice } from '../middleware/auth-device.js';
 

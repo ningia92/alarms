@@ -1,17 +1,12 @@
+import { Request, Response } from 'express';
+
 import { handleAlarmOn } from '../websocket/handlers/alarm-handler.js';
 
 // @desc Turn on alarm
 // @route GET /stanza/:id/allarme/on
-export const turnOnAlarm = async (req, res) => {
+export const turnOnAlarm = async (req: Request, res: Response) => {
   const id = req.params.id;
   const lastActivation = new Date().toISOString();
-
-  // input validation of the room id
-  if (!id.match(/^(\d)+-(\d)+$/g)) {
-    const error = new Error('Bad request');
-    error.statusCode = 400;
-    throw error;
-  }
 
   await handleAlarmOn(req.wss, id, lastActivation);
 

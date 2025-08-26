@@ -4,9 +4,10 @@ import { alarmLogger } from '../utils/alarm-logger.js';
 const redisClient = getRedisClient();
 
 // function that writes data on Redis db and writes logs on .txt file
-export const setAlarmStatus = async (roomId, status, timestamp) => {
+export const setAlarmStatus = async (roomId: string, status: string, timestamp: string) => {
   // input validation of the room id
-  if (!roomId.match(/^(\d)+-(\d)+$/g)) {
+  const roomIdRegex = /^(\d)+-(\d)+$/g;
+  if (!roomId.match(roomIdRegex)) {
     const error = new Error('Bad request');
     error.statusCode = 400;
     throw error;
@@ -27,17 +28,13 @@ export const setAlarmStatus = async (roomId, status, timestamp) => {
   try {
     if (status === 'on') {
 
-      await redisClient.hSet(`room:${roomId}:alarm`,
-        {
-          status: `${status}`,
-          lastActivation: `${timestamp}`
-        });
+      await redisClient.hSet(`room:${roomId}:alarm`, { status: status, lastActivation: timestamp });
     } else {
-      await redisClient.hSet(`room:${roomId}:alarm`, { status: `${status}` });
+      await redisClient.hSet(`room:${roomId}:alarm`, { status: status });
     }
   } catch (err) {
     console.error(`Error while setting alarm status to ${status}`, err);
   }
 
-  await alarmLogger(roomId, oldStatus, status, timestamp);
+  await alarmLogger(roomId, oldStatus ?? '', status, timestamp);
 }
