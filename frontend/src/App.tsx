@@ -30,7 +30,6 @@ const App: React.FC = () => {
     // function that establishes the connection to server
     const connect = () => {
       const ws = new WebSocket('ws://localhost:3000');
-      // setWebSocket(ws);
 
       ws.onopen = () => {
         console.log('Connected to WebSocket Server');

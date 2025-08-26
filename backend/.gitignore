@@ -9,3 +9,7 @@ src/db/data.json
 
 # Typescript build output
 dist/
+
+# FIles no longer needed (for now)
+src/routes/rooms.route.js
+src/controllers/rooms.controller.js
