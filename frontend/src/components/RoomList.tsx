@@ -42,10 +42,10 @@ const RoomList: React.FC<RoomListProps> = ({ rooms, onDeactivate }) => {
         <Accordion title="Blocco 13">
           {renderRoomGrid(block13)}
         </Accordion>
-        <Accordion title="Sezione 14">
+        <Accordion title="Blocco 14">
           {renderRoomGrid(block14)}
         </Accordion>
-        <Accordion title="Piscine">
+        <Accordion title="Piscina">
           {renderRoomGrid(pool)}
         </Accordion>
       </div>

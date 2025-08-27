@@ -11,7 +11,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onDeactivate }) => {
   const [isModalOpen, setModalOpen] = useState(false);
 
   const isActive = room.alarm.status === 'on';
-  const roomType = room.type === 'room' ? "Stanza" : "Piscina"
+  const roomType = room.type === 'room' ? `Stanza ${room.id.split('-')[1]}` : 'Piscina';
 
   return (
     <>
@@ -28,7 +28,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onDeactivate }) => {
             title={`Stato: ${isActive ? 'Attivo' : 'Inattivo'}`}
           ></span>
           <span className="font-medium text-zinc-700 dark:text-zinc-300">
-            {roomType} {room.id.split('-')[1]}
+            {roomType}
           </span>
         </div>
         <div className="flex flex-col space-y-2">
