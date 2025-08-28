@@ -23,7 +23,7 @@ export const alarmLogger = async (id: string, oldStatus: string, status: string,
   if (status === 'on' && oldStatus === 'on') {
     description = 'Alarm activation repeated';
   } else if (status === 'on') {
-    description = 'Alarm activated';
+    description = roomType === 'pool' ? 'Alarm activated - Water level too high' : 'Alarm activated';
   } else if (status === 'off') {
     description = 'Alarm deactivated';
   }

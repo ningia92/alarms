@@ -27,7 +27,6 @@ export const setAlarmStatus = async (roomId: string, status: string, timestamp: 
   // if status is on, set lastActivation of the alarm to timestamp
   try {
     if (status === 'on') {
-
       await redisClient.hSet(`room:${roomId}:alarm`, { status: status, lastActivation: timestamp });
     } else {
       await redisClient.hSet(`room:${roomId}:alarm`, { status: status });
