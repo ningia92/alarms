@@ -25,7 +25,7 @@ export const alarmLogger = async (id: string, oldStatus: string, status: string,
   } else if (status === 'on') {
     description = roomType === 'pool' ? 'Alarm activated - Water level too high' : 'Alarm activated';
   } else if (status === 'off') {
-    description = 'Alarm deactivated';
+    description = roomType === 'pool' ? 'Alarm deactivated - Water level normal' : 'Alarm deactivated';
   }
 
   const log = `${formatDate} [ ${roomType === 'room' ? 'Room ' + id : 'Pool'} ] => ${status} (${description})\n`;
