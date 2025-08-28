@@ -13,7 +13,7 @@ const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <h1 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100">
-            Dashboard Allarmi VOI Hotels
+            VOI Hotels - Dashboard Allarmi
           </h1>
           <button
             onClick={toggleTheme}
