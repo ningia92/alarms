@@ -38,13 +38,13 @@ export const handleAlarmOn = async (wss: WebSocketServer, roomId: string, lastAc
 }
 
 export const handleAlarmOff = async (wss: WebSocketServer, message: AlarmOffMessage) => {
-  const { roomId } = message;
+  const { roomId, reason } = message;
   const lastDeactivation = new Date().toISOString();
 
   if (roomId) {
     // set status field of the alarm to "off" into redis db
     // lastDeactivation is used only for logs
-    await setAlarmStatus(roomId, 'off', lastDeactivation);
+    await setAlarmStatus(roomId, 'off', lastDeactivation, reason);
 
     for (const client of wss.clients) {
       if (client.readyState === WebSocket.OPEN) {

@@ -20,6 +20,7 @@ interface AlarmOnMessage extends BaseMessage {
 interface AlarmOffMessage extends BaseMessage {
   type: 'alarm_off';
   roomId: string;
+  reason: string;
 }
 
 interface ErrorMessage extends BaseMessage {
