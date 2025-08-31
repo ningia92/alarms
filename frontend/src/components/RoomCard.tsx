@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { Room } from '../types';
-import RoomDetailsModal from './RoomDetailsModal.tsx'
+import RoomDetailsModal from './RoomDetailsModal.tsx';
+import DeactivationAlarmModal from './DeactivationAlarmModal.tsx';
 
 interface RoomCardProps {
   room: Room;
@@ -9,9 +10,10 @@ interface RoomCardProps {
 
 const RoomCard: React.FC<RoomCardProps> = ({ room, onDeactivate }) => {
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isDeactivationAlarmModalOpen, setDeactivationAlarmModalOpen] = useState(false);
 
   const isActive = room.alarm.status === 'on';
-  const roomType = room.type === 'room' ? `Stanza ${room.id.split('-')[1]}` : 'Piscina';
+  const roomType = room.type === 'room' ? `Camera ${room.id.split('-')[1]}` : 'Piscina';
 
   return (
     <>
@@ -34,14 +36,18 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onDeactivate }) => {
         <div className="flex flex-col space-y-2">
           <button
             onClick={() => setModalOpen(true)}
-            className="px-3 py-1 text-sm font-semibold text-white bg-primary-800 rounded-md hover:bg-primary-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-500 dark:focus:ring-offset-primary-500/15 focus:ring-primary-900"
+            className="px-3 py-1 text-sm font-semibold text-white bg-primary-700 rounded-md hover:bg-primary-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-100 dark:focus:ring-offset-zinc-800 focus:ring-primary-500"
           >
             Dettagli
           </button>
+          
           {isActive && (
             <button
-              onClick={() => onDeactivate(room.id)}
-              className="px-3 py-1 text-sm font-semibold text-white bg-danger-500 rounded-md hover:bg-danger-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-danger-100 dark:focus:ring-offset-danger-500/15 focus:ring-danger-500"
+              onClick={room.type === 'room'
+                ? () => setDeactivationAlarmModalOpen(true)
+                : () => onDeactivate(room.id)
+              }
+              className="px-3 py-1 text-sm font-semibold text-white bg-danger-500 rounded-md hover:bg-danger-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-danger-100 dark:focus:ring-offset-zinc-800 focus:ring-danger-500"
             >
               Disattiva
             </button>
@@ -53,6 +59,15 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onDeactivate }) => {
         <RoomDetailsModal
           room={room}
           onClose={() => setModalOpen(false)}
+        />
+      )}
+
+      {isDeactivationAlarmModalOpen && (
+        <DeactivationAlarmModal
+          isOpen={isDeactivationAlarmModalOpen}
+          room={room}
+          onClose={() => setDeactivationAlarmModalOpen(false)}
+          onDeactivate={onDeactivate}
         />
       )}
     </>

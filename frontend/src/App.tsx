@@ -88,8 +88,8 @@ const App: React.FC = () => {
     }
   }, []);
 
-  const handleTurnOffAlarm = (roomId: string) => {
-    const message = { type: 'alarm_off', roomId };
+  const handleDeactivateAlarm = (roomId: string, reason = '') => {
+    const message = { type: 'alarm_off', roomId, reason };
 
     if (webSocket.current && webSocket.current.readyState === WebSocket.OPEN) {
       webSocket.current.send(JSON.stringify(message));
@@ -102,12 +102,12 @@ const App: React.FC = () => {
       <main className='container mx-auto p-4 sm:p-6 lg:p-8'>
         <div className='flex flex-col gap-8'>
           <Summary rooms={rooms} />
-          <ActiveAlarms rooms={rooms} onTurnOff={handleTurnOffAlarm} />
-          <RoomList rooms={rooms} onDeactivate={handleTurnOffAlarm} />
+          <ActiveAlarms rooms={rooms} onDeactivate={handleDeactivateAlarm} />
+          <RoomList rooms={rooms} onDeactivate={handleDeactivateAlarm} />
         </div>
       </main>
       <footer className="text-center py-4 text-slate-500 dark:text-slate-400 text-sm">
-        <p>VOI hotels © {new Date().getFullYear()}</p>
+        <p>© {new Date().getFullYear()} VOI Hotels · Sviluppata da Willo</p>
       </footer>
     </div>
   );

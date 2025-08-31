@@ -8,7 +8,7 @@ interface RoomDetailsModalProps {
 
 const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ room, onClose }) => {
   const isActive = room.alarm.status === 'on';
-  const roomType = room.type === 'room' ? `Stanza ${String(room.phone).slice(2)}` : "Piscina";
+  const roomType = room.type === 'room' ? `Camera ${String(room.phone).slice(2)}` : "Piscina";
   const lastActivation = new Date(room.alarm.lastActivation).toLocaleString();
 
   return (
@@ -22,7 +22,7 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ room, onClose }) =>
       >
         <div className="flex items-start justify-between pb-4 border-b border-zinc-200 dark:border-zinc-700">
           <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
-            {roomType}
+            Dettagli {roomType}
           </h3>
           <button
             onClick={onClose}
@@ -65,14 +65,14 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ room, onClose }) =>
         <div className="pt-4 mt-4 text-right border-t border-zinc-200 dark:border-zinc-700">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-semibold text-white bg-primary-800 rounded-md hover:bg-primary-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-500 dark:focus:ring-offset-primary-500/15 focus:ring-primary-900"
+            className="px-4 py-2 text-sm font-semibold text-white bg-primary-800 rounded-md hover:bg-primary-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-100 dark:focus:ring-offset-zinc-800 focus:ring-primary-500"
           >
             Chiudi
           </button>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default RoomDetailsModal;
