@@ -1,19 +1,20 @@
 import { Router } from 'express';
 
-import { turnOnAlarm } from '../controllers/alarms.controller.js';
+import { turnOffAlarm, turnOnAlarm } from '../controllers/alarms.controller.js';
 import { authorizeDevice } from '../middleware/auth-device.js';
 
 const alarmDeviceRouter = Router();
 
 // WARNING: according to the HTTP specification, the get method is a safe method (read-only),
-// meaning it is not intended to cause server changes, as in this case. In fact, here the GET is
-// used to change the alarm state (from off to on).
+// meaning it is not intended to cause server changes, as in this case. Here, the GET is
+// used to change the alarm state.
 // Practical risk: if a GET modify a state, proxy or client could cache the response or pre-loading
 // the link, causing indesiderable executions.
 // =================================================================================================
 // NOTE: the endpoint was taken from the previous system implementation and is not editable, but in
 // the future it would be a good idea to change the get method to: PATCH /api/v1/rooms/:id/alarm with
-// payload { "status": "on" }.
-alarmDeviceRouter.get('/:id/allarme/on', authorizeDevice, turnOnAlarm);
+// payload { "status": "on" } or { "status": "off" }.
+alarmDeviceRouter.get('/:id/alarm/on', authorizeDevice, turnOnAlarm);
+alarmDeviceRouter.get('/:id/alarm/off', authorizeDevice, turnOffAlarm);
 
 export default alarmDeviceRouter;

@@ -15,12 +15,12 @@ const writeFile = async (data: string) => {
 }
 
 // function that handles writing of logs
-export const alarmLogger = async (id: string, oldStatus: string, status: string, reason: string, timestamp: string) => {
+export const alarmLogger = async (id: string, status: string, timestamp: string, isOn = false, reason = '') => {
   const roomType = await redisClient.hGet(`room:${id}`, 'type');
   const formatDate = new Date(timestamp).toLocaleString();
   let description = '';
 
-  if (status === 'on' && oldStatus === 'on') {
+  if (status === 'on' && isOn) {
     description = 'Allarme ripetuto';
   } else if (status === 'on') {
     description = roomType === 'pool'
@@ -30,6 +30,8 @@ export const alarmLogger = async (id: string, oldStatus: string, status: string,
     description = roomType === 'pool'
       ? 'Allarme disattivato - Livello acqua nella norma'
       : `Allarme disattivato: ${reason}`;
+  } else if (status === 'down') {
+    description = 'Dispositivo non raggiungibile';
   }
 
   const log = `${formatDate} [ ${roomType === 'room' ? 'Camera ' + id : 'Piscina'} ] => ${status} (${description})\n`;

@@ -26,7 +26,7 @@ export const getRoomList = async (): Promise<Room[]> => {
 
   const isAlarm = (obj: unknown): obj is Alarm => {
     return typeof obj === 'object' && obj !== null &&
-      'ip' in obj && 'dev' in obj && 'status' in obj && 'lastActivation' in obj;
+      'ip' in obj && 'dev' in obj && 'num' in obj && 'status' in obj && 'lastActivation' in obj;
   };
 
   const rooms: Room[] = [];
@@ -35,14 +35,14 @@ export const getRoomList = async (): Promise<Room[]> => {
   for (const rawRoom of rawRooms) {
     if (!isRedisRoomHash(rawRoom)) {
       console.error('Invalid room data');
-      continue; // Passa al prossimo elemento
+      continue;
     }
 
     const alarmDetails = await redisClient.hGetAll(rawRoom.alarm);
 
     if (!isAlarm(alarmDetails)) {
       console.error(`Invalid alarm data for the room ${rawRoom.id}`);
-      continue; // Passa al prossimo elemento
+      continue;
     }
 
     const completeRoom: Room = { ...rawRoom, alarm: alarmDetails };

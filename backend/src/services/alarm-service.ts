@@ -35,5 +35,5 @@ export const setAlarmStatus = async (roomId: string, status: string, timestamp: 
     console.error(`Error while setting alarm status to ${status}`, err);
   }
 
-  await alarmLogger(roomId, oldStatus ?? '', status, reason, timestamp);
+  await alarmLogger(roomId, status, timestamp, oldStatus === 'on', reason);
 }

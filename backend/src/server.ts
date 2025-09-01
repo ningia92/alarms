@@ -6,6 +6,7 @@ import cors from 'cors';
 import { errorHandler, notFound } from './middleware/error-handling.js';
 import alarmDeviceRouter from './routes/alarm-devices.route.js';
 import { initializeWebSocketServer } from './websocket/index.js';
+// import { startPeriodicDeviceChecks } from './services/health-check-service.js';
 
 // extend Express Request interface to include the ws property
 declare module 'express-serve-static-core' {
@@ -29,12 +30,15 @@ app.use(cors());
 
 // route for endpoint exposed to alarm devices
 // NOTE: read the comment inside the route/alarmDevices.js file
-app.use('/stanza', alarmDeviceRouter);
+app.use('/room', alarmDeviceRouter);
 
 app.use(notFound);
 app.use(errorHandler);
 
 const PORT: string = process.env.PORT ?? '3000';
 server.listen(PORT, () => {
-  console.log(`Server listining on port ${PORT}`)
+  console.log(`Server listining on port ${PORT}`);
+
+  // periodic device alarm checks (if the alarms are ups)
+  // startPeriodicDeviceChecks();
 });

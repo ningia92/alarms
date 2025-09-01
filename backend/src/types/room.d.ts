@@ -22,6 +22,7 @@ interface Room {
 interface Alarm {
   ip: string;
   dev: string;
+  num: string;
   status: string;
   lastActivation: string;
 }
