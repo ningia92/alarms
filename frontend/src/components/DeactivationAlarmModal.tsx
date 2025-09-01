@@ -6,7 +6,6 @@ const DEACTIVATION_REASONS = [
   'Intervento del personale autorizzato',
   'Tentativo di risoluzione da reception',
   'Allarme risolto da manutentore',
-  'Test di sistema',
 ];
 
 interface DeactivationAlarmModalProps {

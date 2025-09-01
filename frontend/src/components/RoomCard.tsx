@@ -12,22 +12,27 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onDeactivate }) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isDeactivationAlarmModalOpen, setDeactivationAlarmModalOpen] = useState(false);
 
-  const isActive = room.alarm.status === 'on';
+  const isOn = room.alarm.status === 'on';
+  const isOff = room.alarm.status === 'off';
+  const isDown = room.alarm.status === 'down';
+  
   const roomType = room.type === 'room' ? `Camera ${room.id.split('-')[1]}` : 'Piscina';
 
   return (
     <>
       <div
-        className={`p-4 rounded-lg flex items-center justify-between transition-colors duration-300 ${isActive
+        className={`p-4 rounded-lg flex items-center justify-between transition-colors duration-300 ${isOn
           ? 'bg-danger-100 dark:bg-danger-500/15'
           : 'bg-zinc-100 dark:bg-zinc-700/50'
           }`}
       >
         <div className="flex items-center">
           <span
-            className={`w-3 h-3 rounded-full mr-3 ${isActive ? 'bg-danger-500' : 'bg-success-500'
-              }`}
-            title={`Stato: ${isActive ? 'Attivo' : 'Inattivo'}`}
+            className={`w-3 h-3 rounded-full mr-3
+              ${isOn && 'bg-danger-500' ||
+              isOff && 'bg-success-500' ||
+              isDown && 'bg-yellow-500'}`}
+            title={`Stato: ${isOn && 'Attivo' || isOff && 'Inattivo' || isDown && 'Non raggiungibile'}`}
           ></span>
           <span className="font-medium text-zinc-700 dark:text-zinc-300">
             {roomType}
@@ -41,7 +46,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onDeactivate }) => {
             Dettagli
           </button>
           
-          {isActive && (
+          {isOn && (
             <button
               onClick={room.type === 'room'
                 ? () => setDeactivationAlarmModalOpen(true)

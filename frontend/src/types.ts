@@ -1,4 +1,4 @@
-export type AlarmStatus = 'on' | 'off'
+export type AlarmStatus = 'on' | 'off' | 'down'
 
 interface Alarm {
   ip: string;

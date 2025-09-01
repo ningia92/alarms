@@ -4,12 +4,10 @@ import Header from './components/Header';
 import Summary from './components/Summary';
 import ActiveAlarms from './components/ActiveAlarms';
 import RoomList from './components/RoomList';
-import toast, { Toaster } from 'react-hot-toast';
 
 const App: React.FC = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
-  const [toastNotification, setToastNotification] = useState(false);
 
   // utilize useRef to mantain the WebSocket instance without re-render
   const webSocket = useRef<WebSocket | null>(null);
@@ -29,8 +27,6 @@ const App: React.FC = () => {
   const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
 
   const notifyAlarm = async () => {
-    setToastNotification(false);
-
     if (!('Notification' in window)) {
       console.warn('The Browser not supports Notification API');
       return;
@@ -41,17 +37,12 @@ const App: React.FC = () => {
     }
 
     if (Notification.permission === 'granted') {
-      new Notification('🚨 Attenzione: allarme attivato', {
+      new Notification('🚨 Attenzione: Allarme attivato!', {
         body: 'Dashboard Allarmi',
       });
     } else {
       console.warn('Notification permission not granted');
     }
-
-    return toast('Allarme attivato', {
-      duration: 8000,
-      icon: '🚨',
-    });
   };
 
   useEffect(() => {
@@ -70,7 +61,7 @@ const App: React.FC = () => {
           if (msg.type === 'room_list' && msg.rooms) {
             setRooms(msg.rooms);
           } else if (msg.type === 'alarm_on' && msg.roomId) {
-            setToastNotification(true);
+            notifyAlarm();
             setRooms(rooms => rooms.map(room => {
               return room.id === msg.roomId
                 ? {
@@ -83,6 +74,18 @@ const App: React.FC = () => {
                 }
                 : room;
             }));
+          } else if (msg.type === 'alarm_down' && msg.roomId) {
+            setRooms(rooms => rooms.map(room => {
+              return room.id === msg.roomId
+                ? {
+                  ...room,
+                  alarm : {
+                    ...room.alarm,
+                    status: msg.status,
+                  }
+                }
+                : room;
+            }))
           } else if (msg.type === 'error') {
             console.log(msg.info);
           }
@@ -127,12 +130,6 @@ const App: React.FC = () => {
 
   return (
     <div className='min-h-screen bg-slate-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100'>
-      {toastNotification && notifyAlarm()}
-      <Toaster
-        containerStyle={{
-          top: '24px'
-        }}
-      />
       <Header theme={theme} toggleTheme={toggleTheme} />
       <main className='container mx-auto p-4 sm:p-6 lg:p-8'>
         <div className='flex flex-col gap-8'>

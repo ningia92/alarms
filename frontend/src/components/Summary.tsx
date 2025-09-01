@@ -32,14 +32,15 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, iconContainerCl
 const Summary: React.FC<SummaryProps> = ({ rooms }) => {
   const totalRooms = rooms.length;
   const activeAlarmsCount = rooms.filter(room => room.alarm.status === 'on').length;
-  const safeRoomsCount = totalRooms - activeAlarmsCount;
+  const downRoomsCount = rooms.filter(room => room.alarm.status === 'down').length;
+  const safeRoomsCount = totalRooms - activeAlarmsCount - downRoomsCount;
 
   return (
     <section>
       <h2 className="text-xl font-semibold text-zinc-700 dark:text-zinc-300 mb-4">
         Riepilogo
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title="Camere Totali"
           value={totalRooms}
@@ -57,6 +58,12 @@ const Summary: React.FC<SummaryProps> = ({ rooms }) => {
           value={safeRoomsCount}
           icon={<ShieldCheckIcon className="w-7 h-7 text-success-500 dark:text-success-400" />}
           iconContainerClass="bg-success-100 dark:bg-success-500/10"
+        />
+        <StatCard
+          title="Camere Non Raggiungibili"
+          value={downRoomsCount}
+          icon={<AlertTriangleIcon className="w-7 h-7 text-yellow-500 dark:text-yellow-400" />}
+          iconContainerClass="bg-yellow-100 dark:bg-yellow-500/10"
         />
       </div>
     </section>

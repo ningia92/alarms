@@ -7,7 +7,10 @@ interface RoomDetailsModalProps {
 }
 
 const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ room, onClose }) => {
-  const isActive = room.alarm.status === 'on';
+  const isOn = room.alarm.status === 'on';
+  const isOff = room.alarm.status === 'off';
+  const isDown = room.alarm.status === 'down';
+
   const roomType = room.type === 'room' ? `Camera ${String(room.phone).slice(2)}` : "Piscina";
   const lastActivation = new Date(room.alarm.lastActivation).toLocaleString();
 
@@ -48,12 +51,13 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ room, onClose }) =>
           </div>
           <div className="flex justify-between">
             <span className="font-medium text-zinc-600 dark:text-zinc-400">Stato allarme:</span>
-            <span className={`px-2 py-1 text-xs font-bold rounded-full ${isActive
-              ? 'bg-danger-100 text-danger-800 dark:bg-danger-500/20 dark:text-danger-300'
-              : 'bg-success-100 text-success-800 dark:bg-success-500/20 dark:text-success-300'
+            <span className={`px-2 py-1 text-xs font-bold rounded-full ${
+              isOn && 'bg-danger-100 text-danger-800 dark:bg-danger-500/20 dark:text-danger-300' ||
+              isOff && 'bg-success-100 text-success-800 dark:bg-success-500/20 dark:text-success-300' ||
+              isDown && 'bg-yellow-100 text-yellow-800 dark:bg-yellow-500/20 dark:text-yellow-300'
               }`}
             >
-              {isActive ? 'ATTIVO' : 'INATTIVO'}
+              {isOn && 'ATTIVO' || isOff && 'INATTIVO' || isDown && 'NON RAGGIUNGIBILE' }
             </span>
           </div>
           <div className="flex justify-between">
