@@ -6,14 +6,14 @@ import { handleAlarmOff, handleAlarmOn } from '../websocket/handlers/alarm-handl
 // @route GET /room/:id/alarm/on
 export const turnOnAlarm = async (req: Request, res: Response) => {
   const roomId = req.params.id;
-  const lastActivation = new Date().toISOString();
+  const timestamp = new Date().toISOString();
 
   if (!roomId) {
     console.error('Missing room id');
     return;
   }
 
-  await handleAlarmOn(req.wss, roomId, lastActivation);
+  await handleAlarmOn(req.wss, roomId, timestamp);
 
   // set these response headers to mitigate the problem of the caching caused by the unsafe GET
   // "Cache-Control: no-store" indicates that any caches of any kind (private or shared) should

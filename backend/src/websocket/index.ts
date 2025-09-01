@@ -36,7 +36,7 @@ export const initializeWebSocketServer = (server: HttpServer): WebSocketServer =
 
     ws.on('message', async (msg: string) => {
       try {
-        const parsedMsg: WebSocketMessage = JSON.parse(msg) as WebSocketMessage;
+        const parsedMsg: AlarmOffMessage = JSON.parse(msg) as AlarmOffMessage;
   
         switch (parsedMsg.type) {
           case 'alarm_off':

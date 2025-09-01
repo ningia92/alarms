@@ -1,13 +1,11 @@
 import fetch from 'node-fetch';
 
-import { getRedisClient } from '../db/redis-client.js';
 import { getRoomList } from './room-service.js';
-import { alarmLogger } from '../utils/alarm-logger.js';
+import { handleAlarmDown, handleAlarmOff } from '../websocket/handlers/alarm-handler.js';
+import { WebSocketServer } from 'ws';
 
-const redisClient = getRedisClient();
-
-// 1 minute check interval
-const CHECK_INTERVAL = 6000;
+// 30 seconds check interval
+const CHECK_INTERVAL = 30000;
 
 // send an HTTP HEAD to the alarm device to check if it's up
 // if the device does not respond change its status to down
@@ -18,36 +16,30 @@ const isAlarmUp = async (alarm: Alarm) => {
   try {
     const response = await fetch(url, {
       method: 'HEAD',
-      /////////// timeout (?)
+      signal: AbortSignal.timeout(2000)
     });
 
     return response.ok;
   } catch (err) {
     console.error(`Alarm device with IP ${ip} is unreachable:`, err);
-    return false;
   }
-} 
+}
 
-const deviceHealthChecks = async () => {
+const deviceHealthChecks = async (wss: WebSocketServer) => {
   try {
     const rooms = await getRoomList();
-    const devices = rooms.map(room => {
-      return {
-        roomId: room.id,
-        alarm: room.alarm
-      }
-    });
 
-    for (const device of devices) {
-      const isUp = await isAlarmUp(device.alarm);
+    for (const room of rooms) {
+      const { id: roomId, alarm } = room;
 
+      const isUp = await isAlarmUp(alarm);
+
+      const timestamp = new Date().toISOString();
       if (!isUp) {
-        const timestamp = new Date().toISOString();
-        const status = 'down';
-
-        await redisClient.hSet(`room:${device.roomId}:alarm`, { status });
-
-        await alarmLogger(device.roomId, status, timestamp);
+        await handleAlarmDown(wss, roomId, timestamp);
+      } else {
+        const message: AlarmOffMessage = { roomId, reason: 'Allarme nuovamente raggiungibile' } as AlarmOffMessage;
+        await handleAlarmOff(wss, message);
       }
     }
   } catch (err) {
@@ -56,10 +48,10 @@ const deviceHealthChecks = async () => {
 }
 
 // start periodic checks
-export const startPeriodicDeviceChecks = () => {
-  console.log('Start of periodic checks of alarm devices...');
+export const startPeriodicDeviceChecks = (wss: WebSocketServer) => {
+  console.log('Periodic checks of alarm devices...');
 
   setInterval(() => {
-    void deviceHealthChecks();
+    void deviceHealthChecks(wss);
   }, CHECK_INTERVAL);
 }

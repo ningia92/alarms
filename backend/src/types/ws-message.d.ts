@@ -6,26 +6,27 @@ interface BaseMessage {
 }
 
 interface RoomListMessage extends BaseMessage {
-  type: 'room_list';
   rooms: Room[];
 }
 
-interface AlarmOnMessage extends BaseMessage {
-  type: 'alarm_on';
+interface AlarmDownMessage extends BaseMessage {
   roomId: string;
-  status: 'on';
+  status: string;
+}
+
+interface AlarmOnMessage extends BaseMessage {
+  roomId: string;
+  status: string;
   lastActivation: string;
 }
 
 interface AlarmOffMessage extends BaseMessage {
-  type: 'alarm_off';
   roomId: string;
   reason: string;
 }
 
 interface ErrorMessage extends BaseMessage {
-  type: 'error';
   info: string;
 }
 
-type WebSocketMessage = RoomListMessage | AlarmOnMessage | AlarmOffMessage | ErrorMessage;
+type WebSocketMessage = RoomListMessage | AlarmDownMessage | AlarmOnMessage | AlarmOffMessage | ErrorMessage;

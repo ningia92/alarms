@@ -31,7 +31,7 @@ export const alarmLogger = async (id: string, status: string, timestamp: string,
       ? 'Allarme disattivato - Livello acqua nella norma'
       : `Allarme disattivato: ${reason}`;
   } else if (status === 'down') {
-    description = 'Dispositivo non raggiungibile';
+    description = 'Allarme non raggiungibile';
   }
 
   const log = `${formatDate} [ ${roomType === 'room' ? 'Camera ' + id : 'Piscina'} ] => ${status} (${description})\n`;

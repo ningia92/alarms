@@ -6,7 +6,7 @@ import cors from 'cors';
 import { errorHandler, notFound } from './middleware/error-handling.js';
 import alarmDeviceRouter from './routes/alarm-devices.route.js';
 import { initializeWebSocketServer } from './websocket/index.js';
-// import { startPeriodicDeviceChecks } from './services/health-check-service.js';
+import { startPeriodicDeviceChecks } from './services/health-check-service.js';
 
 // extend Express Request interface to include the ws property
 declare module 'express-serve-static-core' {
@@ -25,6 +25,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   req.wss = wss;
   next();
 });
+
 app.use(express.json());
 app.use(cors());
 
@@ -40,5 +41,5 @@ server.listen(PORT, () => {
   console.log(`Server listining on port ${PORT}`);
 
   // periodic device alarm checks (if the alarms are ups)
-  // startPeriodicDeviceChecks();
+  startPeriodicDeviceChecks(wss);
 });
