@@ -3,8 +3,9 @@ import { Server as HttpServer } from 'http';
 import { WebSocket, WebSocketServer } from 'ws';
 
 import { getRoomList } from '../services/room-service.js';
-import { handleAlarmOff } from './handlers/alarm-handler.js';
+import { handleAlarmOff } from './alarm-handler.js';
 
+// extend Web Socket interface with isAlive property
 declare module 'ws' {
   interface WebSocket {
     isAlive: boolean;
@@ -21,7 +22,7 @@ export const initializeWebSocketServer = (server: HttpServer): WebSocketServer =
 
   wss.on('connection', async (ws: WebSocket) => {
     console.log('WebSocket client connected');
-    // set the initial state of client and handle the ping response
+    // set the initial state of client and handle the response (pong) to the server ping
     ws.isAlive = true;
     ws.on('pong', heartBeat);
 
@@ -37,7 +38,7 @@ export const initializeWebSocketServer = (server: HttpServer): WebSocketServer =
     ws.on('message', async (msg: string) => {
       try {
         const parsedMsg: AlarmOffMessage = JSON.parse(msg) as AlarmOffMessage;
-  
+
         switch (parsedMsg.type) {
           case 'alarm_off':
             await handleAlarmOff(wss, parsedMsg);
@@ -60,7 +61,7 @@ export const initializeWebSocketServer = (server: HttpServer): WebSocketServer =
   });
 
   // terminate the broken connections for dead clients and
-  // send a 'ping' for the others, if they repond with a 'pong'
+  // send a 'ping' to the others, if they repond with a 'pong'
   // the event 'pong' will return isAlive to true with the function heartBeat
   const ping = () => {
     wss.clients.forEach((ws: WebSocket) => {
@@ -74,7 +75,7 @@ export const initializeWebSocketServer = (server: HttpServer): WebSocketServer =
     })
   }
 
-  // set the interval for the ping call to 3 seconds
+  // detect and close broken connection every 3 seconds
   const interval = setInterval(ping, 3000);
 
   // clean the interval when the server is closed

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { handleAlarmOff, handleAlarmOn } from '../websocket/handlers/alarm-handler.js';
+import { handleAlarmOff, handleAlarmOn } from '../websocket/alarm-handler.js';
 
 // @desc Turn on alarm
 // @route GET /room/:id/alarm/on

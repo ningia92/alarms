@@ -2,7 +2,8 @@ import fetch from 'node-fetch';
 
 import { getRoomList } from '../services/room-service.js';
 
-// set the various behaviors of the alarm based on how the alarm is activated  
+// set all the behaviors of the alarm based on how the alarm is activated
+// this function is called manually when necessary
 const configureAlarms = async () => {
   try {
     const rooms = await getRoomList();
@@ -16,14 +17,15 @@ const configureAlarms = async () => {
   
       // URL to configure alarm device
       const configurationUrl = `http://${alarmIp}/settings/${alarmDev}/${alarmNum}`;
-      // URLs to send alarm statuses to the server
+      // URLs to change alarm statuses to the server
       const alarmOnUrl = `http://${serverIp}/room/${roomId}/alarm/on`;
       const alarmOffUrl = `http://${serverIp}/room/${roomId}/alarm/off`;
   
-      // shortpush: pressione breve singola
-      // longpush: pressione lunga
-      // double_shortpush: doppia pressione breve
-      // triple_shortpush: tripla pressione breve
+      // different ways to press the alarm:
+      // shortpush --> single short press
+      // longpush --> long press
+      // double_shortpush --> double short press
+      // triple_shortpush --> triple short press
       const requests = [
         { param: 'shortpush_url', url: alarmOnUrl},
         { param: 'longpush_url', url: alarmOnUrl},

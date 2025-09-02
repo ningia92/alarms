@@ -5,18 +5,24 @@ const redisClient = getRedisClient();
 
 const flushDB = async () => redisClient.flushDb();
 
+// into the DB the rooms data are stored as hashes
+// room and alarm are stored in separate hashes:
+// a room is represented by the key "room:{roomId}"
+// inside the room hash there is the "alarm" field
+// which in turn is an hash key
+// the alarm is represented by the key "room:{roomId}:alarm"
 const loadData = async () => {
   console.log('Flushing database before loading data');
   await flushDB();
 
   console.log('Loading data...');
   for (const room of rooms) {
-    const id = room.id;
+    const roomId = room.id;
     const alarm: Alarm = room.alarm;
-    const roomWithAlarmKey: RedisRoomHash = { ...room, alarm: `room:${id}:alarm` };
+    const roomWithAlarmKey: RedisRoomHash = { ...room, alarm: `room:${roomId}:alarm` };
 
-    await redisClient.hSet(`room:${id}`, { ...roomWithAlarmKey });
-    await redisClient.hSet(`room:${id}:alarm`, { ...alarm });
+    await redisClient.hSet(`room:${roomId}`, { ...roomWithAlarmKey });
+    await redisClient.hSet(`room:${roomId}:alarm`, { ...alarm });
   }
 }
 

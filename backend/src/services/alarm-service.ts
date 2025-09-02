@@ -3,9 +3,11 @@ import { alarmLogger } from '../utils/alarm-logger.js';
 
 const redisClient = getRedisClient();
 
-// write alarm status changes (on/off/down) on Redis and write logs on .txt file
+// store alarm status (on/off/down) in Redis DB and write logs to the alarm-logs.txt file
 export const setAlarmStatus = async (roomId: string, status: string, timestamp: string, reason = '') => {
   // input validation of the room id
+  // the id must be in the form xx-xx
+  // where x is a numerical digit
   const roomIdRegex = /^(\d)+-(\d)+$/g;
   if (!roomId.match(roomIdRegex)) {
     const error = new Error('Bad request');

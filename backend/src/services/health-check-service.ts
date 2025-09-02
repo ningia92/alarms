@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 
 import { getRoomList } from './room-service.js';
-import { handleAlarmDown, handleAlarmOff } from '../websocket/handlers/alarm-handler.js';
+import { handleAlarmDown, handleAlarmOff } from '../websocket/alarm-handler.js';
 import { WebSocketServer } from 'ws';
 
 // 30 seconds check interval
@@ -16,7 +16,7 @@ const isAlarmUp = async (alarm: Alarm) => {
   try {
     const response = await fetch(url, {
       method: 'HEAD',
-      signal: AbortSignal.timeout(2000)
+      signal: AbortSignal.timeout(2000) // 2 seconds timeout to prevent fetch requests from remaining pending
     });
 
     return response.ok;
@@ -24,7 +24,7 @@ const isAlarmUp = async (alarm: Alarm) => {
     console.error(`Alarm device with IP ${ip} is unreachable:`, err);
   }
 }
-
+ 
 const deviceHealthChecks = async (wss: WebSocketServer) => {
   try {
     const rooms = await getRoomList();

@@ -1,8 +1,9 @@
 import { WebSocketServer } from 'ws';
 
-import { setAlarmStatus } from '../../services/alarm-service.js';
-import { callRoom, getRoomList } from '../../services/room-service.js';
+import { setAlarmStatus } from '../services/alarm-service.js';
+import { callRoom, getRoomList } from '../services/room-service.js';
 
+// called by health check service that is executed periodically
 export const handleAlarmDown = async (wss: WebSocketServer, roomId: string, timestamp: string) => {
   if (!roomId) {
     console.error('Missing room id');
@@ -34,6 +35,7 @@ export const handleAlarmDown = async (wss: WebSocketServer, roomId: string, time
   })
 }
 
+// called by alarms controller when an alarm is activated
 export const handleAlarmOn = async (wss: WebSocketServer, roomId: string, timestamp: string) => {
   if (!roomId) {
     console.error('Missing room id');
@@ -71,6 +73,9 @@ export const handleAlarmOn = async (wss: WebSocketServer, roomId: string, timest
   })
 }
 
+// called by main wss function when a ws client send the "turn off" alarm message
+// called by alarms controller when an alarm is turned off by the alarm device
+// called by health check service when an alarm is newly reachable
 export const handleAlarmOff = async (wss: WebSocketServer, message: AlarmOffMessage) => {
   const { roomId, reason } = message;
   const timestamp = new Date().toISOString();

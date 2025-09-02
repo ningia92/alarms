@@ -6,24 +6,29 @@ import { getRedisClient } from '../db/redis-client.js';
 const redisClient: RedisClientType = getRedisClient();
 
 export const getRoomList = async (): Promise<Room[]> => {
-  // scan was used istead of keys (redisClient.keys('room:*'))
-  // because keys is not recommended for production use
   const keyList: string[] = [];
-  for await (const keys of redisClient.scanIterator({ MATCH: 'room:*' }))
+  
+  // scan was used istead of keys (redisClient.keys('room:*'))
+  // because is more efficient compared to keys
+  // keys is not recommended in production
+  for await (const keys of redisClient.scanIterator({ MATCH: 'room:*' })) {
     keys.forEach((key: string) => keyList.push(key));
+  }
 
   if (keyList.length === 0) throw new Error('No rooms found');
 
   // regex to filter only the room keys (excluding alarm keys)
+  // because scan iterator return also alarm hashes (room:{roomId}:alarm)
+  // this is necessary because redis doesn't offer complex regexes
   const roomRegex = /^room:(\d){2}-(\d){2}$/g;
   const roomKeys: string[] = keyList.filter((key: string) => key.match(roomRegex));
 
   const rawRooms = await Promise.all(roomKeys.map(key => redisClient.hGetAll(key)));
 
+  // type guards to verify at runtime that an unkown value has the expected properties
   const isRedisRoomHash = (obj: unknown): obj is RedisRoomHash => {
     return typeof obj === 'object' && obj !== null && 'id' in obj && 'type' in obj && 'alarm' in obj;
   };
-
   const isAlarm = (obj: unknown): obj is Alarm => {
     return typeof obj === 'object' && obj !== null &&
       'ip' in obj && 'dev' in obj && 'num' in obj && 'status' in obj && 'lastActivation' in obj;
@@ -52,6 +57,7 @@ export const getRoomList = async (): Promise<Room[]> => {
   return rooms;
 }
 
+// get phone number of the room
 const getRoomNumber = async (roomId: string): Promise<string | null> => {
   try {
     return await redisClient.hGet(`room:${roomId}`, 'number');
@@ -61,7 +67,7 @@ const getRoomNumber = async (roomId: string): Promise<string | null> => {
   return null;
 }
 
-// function that call the room, through API Wildix PBX, when the alarm is turned on
+// function that call the room phone, through API Wildix PBX, when the alarm is turned on
 export const callRoom = async (roomId: string) => {
   const url = process.env.PBX_URL ?? '';
   const username = process.env.PBX_USER ?? '';

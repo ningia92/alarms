@@ -6,7 +6,7 @@ import cors from 'cors';
 import { errorHandler, notFound } from './middleware/error-handling.js';
 import alarmDeviceRouter from './routes/alarm-devices.route.js';
 import { initializeWebSocketServer } from './websocket/index.js';
-import { startPeriodicDeviceChecks } from './services/health-check-service.js';
+// import { startPeriodicDeviceChecks } from './services/health-check-service.js';
 
 // extend Express Request interface to include the ws property
 declare module 'express-serve-static-core' {
@@ -16,30 +16,36 @@ declare module 'express-serve-static-core' {
 }
 
 const app: Express = express();
-// create an HTTP server to pass express app
+
+// create an HTTP server to pass to the express app
 const server: HttpServer = createServer(app);
+
 // create an instance of WebSocket server and pass server to it
 const wss: WebSocketServer = initializeWebSocketServer(server);
 
+// extend Request interface to include wss instance to make it accessible to controllers
 app.use((req: Request, res: Response, next: NextFunction) => {
   req.wss = wss;
   next();
 });
 
 app.use(express.json());
+
 app.use(cors());
 
-// route for endpoint exposed to alarm devices
-// NOTE: read the comment inside the route/alarmDevices.js file
+// route for the endpoint exposed to alarm devices
 app.use('/room', alarmDeviceRouter);
 
+// if no route respond -> 404
 app.use(notFound);
+
+// final error handler
 app.use(errorHandler);
 
 const PORT: string = process.env.PORT ?? '3000';
 server.listen(PORT, () => {
   console.log(`Server listining on port ${PORT}`);
 
-  // periodic device alarm checks (if the alarms are ups)
-  startPeriodicDeviceChecks(wss);
+  // periodic device alarm checks (if the alarms are up)
+  // startPeriodicDeviceChecks(wss);
 });
