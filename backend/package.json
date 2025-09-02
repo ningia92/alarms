@@ -9,7 +9,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "tsx --watch --env-file=.env src/server.ts",
-    "start": "node --env-file=.env dist/server.js",
+    "start": "node --env-file=.env dist/src/server.js",
     "build": "tsc",
     "type-check": "tsc --noEmit",
     "lint": "eslint .",
