@@ -87,7 +87,7 @@ const App: React.FC = () => {
                 : room;
             }))
           } else if (msg.type === 'error') {
-            console.log(msg.info);
+            console.error(msg.info);
           }
         } catch (err) {
           console.error('Invalid WebSocket message', err);

@@ -4,6 +4,7 @@ import { WebSocket, WebSocketServer } from 'ws';
 
 import { getRoomList } from '../services/room-service.js';
 import { handleAlarmOff } from './alarm-handler.js';
+import { sendMessageToClient } from './messages.js';
 
 // extend Web Socket interface with isAlive property
 declare module 'ws' {
@@ -29,19 +30,24 @@ export const initializeWebSocketServer = (server: HttpServer): WebSocketServer =
     // send room list to the newly connected web socket client
     try {
       const roomList = await getRoomList();
-      ws.send(JSON.stringify({ rooms: roomList, type: 'room_list' }));
+      const message = {
+        type: 'room_list',
+        rooms: roomList
+      }
+      
+      sendMessageToClient(ws, message);
     } catch (err) {
-      console.error('Error retrieving data from db', err);
-      ws.send(JSON.stringify({ info: 'Unable to retrieve data from db', type: 'error' }));
-    };
+      console.error('Error retrieving data from db:', err);
+    }
 
     ws.on('message', async (msg: string) => {
       try {
         const parsedMsg: AlarmOffMessage = JSON.parse(msg) as AlarmOffMessage;
+        const timestamp = new Date().toISOString();
 
         switch (parsedMsg.type) {
           case 'alarm_off':
-            await handleAlarmOff(wss, parsedMsg);
+            await handleAlarmOff(wss, parsedMsg, timestamp);
             break;
           default:
             console.log(`Unknown message type: ${parsedMsg.type}`);

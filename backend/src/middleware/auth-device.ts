@@ -16,7 +16,7 @@ export const authorizeDevice = (req: Request, res: Response, next: NextFunction)
   const isAuthorized = ip?.match(IP_REGEX) ?? ip === '::1';
 
   if (!isAuthorized) {
-    const error = new Error('Forbidden endpoint');
+    const error = new Error('Forbidden resource');
     error.statusCode = 403;
     throw error;
   } else {

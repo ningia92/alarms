@@ -30,16 +30,20 @@ export const turnOnAlarm = async (req: Request, res: Response) => {
 // @route GET /room/:id/alarm/off
 export const turnOffAlarm = async (req: Request, res: Response) => {
   const roomId = req.params.id;
-  const reason = 'Allarme risolto da manutentore';
+  const timestamp = new Date().toISOString();
 
   if (!roomId) {
     console.error('Missing room id');
     return;
   }
 
-  const message: AlarmOffMessage = { roomId, reason } as AlarmOffMessage;
+  const message: AlarmOffMessage = {
+    type: 'alarm_off',
+    roomId,
+    reason: 'Allarme risolto da manutentore'
+  };
 
-  await handleAlarmOff(req.wss, message);
+  await handleAlarmOff(req.wss, message, timestamp);
 
   // set these response headers to mitigate the problem of the caching caused by the unsafe GET
   // "Cache-Control: no-store" indicates that any caches of any kind (private or shared) should

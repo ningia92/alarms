@@ -30,9 +30,8 @@ const runDataLoader = async () => {
   try {
     await loadData();
     console.log('Data load completed');
-  } catch (e) {
-    console.log('Error loading data');
-    console.log(e);
+  } catch (err) {
+    console.error('Error loading data:', err);
   } finally {
     await redisClient.close();
   }

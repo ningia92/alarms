@@ -24,7 +24,7 @@ const isAlarmUp = async (alarm: Alarm) => {
     console.error(`Alarm device with IP ${ip} is unreachable:`, err);
   }
 }
- 
+
 const deviceHealthChecks = async (wss: WebSocketServer) => {
   try {
     const rooms = await getRoomList();
@@ -38,8 +38,14 @@ const deviceHealthChecks = async (wss: WebSocketServer) => {
       if (!isUp) {
         await handleAlarmDown(wss, roomId, timestamp);
       } else {
-        const message: AlarmOffMessage = { roomId, reason: 'Allarme nuovamente raggiungibile' } as AlarmOffMessage;
-        await handleAlarmOff(wss, message);
+        const message: AlarmOffMessage = {
+          type: 'alarm_off',
+          roomId,
+          reason: 'Allarme nuovamente raggiungibile'
+        };
+        const timestamp = new Date().toISOString();
+
+        await handleAlarmOff(wss, message, timestamp);
       }
     }
   } catch (err) {

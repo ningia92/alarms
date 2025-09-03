@@ -3,7 +3,6 @@ import { createServer, Server as HttpServer } from 'http';
 import { WebSocketServer } from 'ws';
 import cors from 'cors';
 
-import { errorHandler, notFound } from './middleware/error-handling.js';
 import alarmDeviceRouter from './routes/alarm-devices.route.js';
 import { initializeWebSocketServer } from './websocket/index.js';
 // import { startPeriodicDeviceChecks } from './services/health-check-service.js';
@@ -35,12 +34,6 @@ app.use(cors());
 
 // route for the endpoint exposed to alarm devices
 app.use('/room', alarmDeviceRouter);
-
-// if no route respond -> 404
-app.use(notFound);
-
-// final error handler
-app.use(errorHandler);
 
 const PORT: string = process.env.PORT ?? '3000';
 server.listen(PORT, () => {

@@ -29,4 +29,4 @@ interface ErrorMessage extends BaseMessage {
   info: string;
 }
 
-type WebSocketMessage = RoomListMessage | AlarmDownMessage | AlarmOnMessage | AlarmOffMessage | ErrorMessage;
+type WebSocketMessage = BaseMessage | RoomListMessage | AlarmDownMessage | AlarmOnMessage | AlarmOffMessage | ErrorMessage;

@@ -12,7 +12,3 @@ logs/
 
 # Typescript build output
 dist/
-
-# Files no longer needed
-src/routes/rooms.route.js
-src/controllers/rooms.controller.js

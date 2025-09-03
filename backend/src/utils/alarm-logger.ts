@@ -10,7 +10,7 @@ const writeFile = async (data: string) => {
     // path needs to start with single dot "./" and not double dot "../"
     await fs.writeFile('./logs/alarm-logs.txt', data, { flag: 'a+' });
   } catch (err) {
-    console.error('Error during write logs', err);
+    console.error('Error while writing logs:', err);
   }
 }
 
