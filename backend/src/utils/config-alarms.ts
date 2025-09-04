@@ -6,7 +6,7 @@ import { getRoomList } from '../services/room-service.js';
 // this function is called manually when necessary
 const configureAlarms = async () => {
   try {
-    const rooms = await getRoomList();
+    const rooms: Room[] = await getRoomList();
 
     for (const room of rooms) {
       const serverIp = process.env.SERVER_IP ?? '';

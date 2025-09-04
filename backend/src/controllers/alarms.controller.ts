@@ -10,7 +10,7 @@ export const turnOnAlarm = async (req: Request, res: Response) => {
 
   if (!roomId) {
     console.error('Missing room id');
-    return;
+    res.status(400).end();
   }
 
   await handleAlarmOn(req.wss, roomId, timestamp);
@@ -34,8 +34,10 @@ export const turnOffAlarm = async (req: Request, res: Response) => {
 
   if (!roomId) {
     console.error('Missing room id');
-    return;
+    res.status(400).end();
   }
+
+  await handleAlarmOn(req.wss, roomId, timestamp);
 
   const message: AlarmOffMessage = {
     type: 'alarm_off',

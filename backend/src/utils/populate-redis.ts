@@ -18,11 +18,11 @@ const loadData = async () => {
   console.log('Loading data...');
   for (const room of rooms) {
     const roomId = room.id;
-    const alarm: Alarm = room.alarm;
-    const roomWithAlarmKey: RedisRoomHash = { ...room, alarm: `room:${roomId}:alarm` };
+    const alarmHash: RedisAlarmHash = room.alarm;
+    const roomHash: RedisRoomHash = { ...room, alarm: `room:${roomId}:alarm` };
 
-    await redisClient.hSet(`room:${roomId}`, { ...roomWithAlarmKey });
-    await redisClient.hSet(`room:${roomId}:alarm`, { ...alarm });
+    await redisClient.hSet(`room:${roomId}`, { ...roomHash });
+    await redisClient.hSet(`room:${roomId}:alarm`, { ...alarmHash });
   }
 }
 

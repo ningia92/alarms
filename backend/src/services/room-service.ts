@@ -1,60 +1,48 @@
 import fetch from 'node-fetch';
-import { RedisClientType } from 'redis';
+import { getRoomKeys, getRoomData, roomExists, getPhoneNumber } from '../db/room-repository.js';
+import { getAlarmData } from '../db/alarm-repository.js';
 
-import { getRedisClient } from '../db/redis-client.js';
+// type guard to verify at runtime that an unknown value has the expected properties of the redis room hash
+const isRedisRoomHash = (obj: unknown): obj is RedisRoomHash => {
+  return typeof obj === 'object' && obj !== null && 'id' in obj && 'type' in obj && 'alarm' in obj;
+};
 
-const redisClient: RedisClientType = getRedisClient();
+// type guard to verify at runtime that an unknown value has the expected properties of the alarm
+const isAlarm = (obj: unknown): obj is Alarm => {
+  return typeof obj === 'object' && obj !== null &&
+    'ip' in obj && 'dev' in obj && 'num' in obj && 'status' in obj && 'lastActivation' in obj;
+};
 
 export const getRoomList = async (): Promise<Room[]> => {
   try {
-    const keyList: string[] = [];
-    
-    // scan was used istead of keys (redisClient.keys('room:*'))
-    // because is more efficient compared to keys
-    // keys is not recommended in production
-    for await (const keys of redisClient.scanIterator({ MATCH: 'room:*' })) {
-      keys.forEach((key: string) => keyList.push(key));
+    const roomKeys: string[] = await getRoomKeys();
+
+    if (roomKeys.length === 0) {
+      console.error('No rooms found');
+      return [];
     }
-  
-    if (keyList.length === 0) throw new Error('No rooms found');
-  
-    // regex to filter only the room keys (excluding alarm keys)
-    // because scan iterator return also alarm hashes (room:{roomId}:alarm)
-    // this is necessary because redis doesn't offer complex regexes
-    const roomRegex = /^room:(\d){2}-(\d){2}$/g;
-    const roomKeys: string[] = keyList.filter((key: string) => key.match(roomRegex));
-  
-    const rawRooms = await Promise.all(roomKeys.map(key => redisClient.hGetAll(key)));
-  
-    // type guards to verify at runtime that an unkown value has the expected properties
-    const isRedisRoomHash = (obj: unknown): obj is RedisRoomHash => {
-      return typeof obj === 'object' && obj !== null && 'id' in obj && 'type' in obj && 'alarm' in obj;
-    };
-    const isAlarm = (obj: unknown): obj is Alarm => {
-      return typeof obj === 'object' && obj !== null &&
-        'ip' in obj && 'dev' in obj && 'num' in obj && 'status' in obj && 'lastActivation' in obj;
-    };
-  
+
+    const rawRooms = await Promise.all(roomKeys.map(key => getRoomData(key)));
+
     const rooms: Room[] = [];
-  
-    // because the alarm field contains a key it must be expanded
+
     for (const rawRoom of rawRooms) {
       if (!isRedisRoomHash(rawRoom)) {
         console.error('Invalid room data');
         continue;
       }
-  
-      const alarmDetails = await redisClient.hGetAll(rawRoom.alarm);
-  
+
+      const alarmDetails = await getAlarmData(rawRoom.alarm);
+
       if (!isAlarm(alarmDetails)) {
-        console.error(`Invalid alarm data for the room ${rawRoom.id}`);
+        console.error(`Invalid alarm data for room ${rawRoom.id}`);
         continue;
       }
-  
+
       const completeRoom: Room = { ...rawRoom, alarm: alarmDetails };
       rooms.push(completeRoom);
     }
-  
+
     return rooms;
   } catch (err) {
     console.error('Error during get the room list:', err);
@@ -62,18 +50,22 @@ export const getRoomList = async (): Promise<Room[]> => {
   }
 }
 
-// get phone number of the room
-const getRoomNumber = async (roomId: string): Promise<string | null> => {
+export const checkRoomExists = async (roomId: string): Promise<boolean> => {
   try {
-    return await redisClient.hGet(`room:${roomId}`, 'number');
+    const isRoomExistent = await roomExists(roomId);
+  
+    if (isRoomExistent === 0) {
+      return false;
+    }
   } catch (err) {
-    console.error('Error during get the telephone number of the room', err);
-    return null;
+    console.error('Error during check existence of the room:', err);
   }
+  
+  return true;
 }
 
 // function that call the room phone, through API Wildix PBX, when the alarm is turned on
-export const callRoom = async (roomId: string) => {
+export const callRoom = async (roomId: string): Promise<void> => {
   const url = process.env.PBX_URL ?? '';
   const username = process.env.PBX_USER ?? '';
   const password = process.env.PBX_PWD ?? '';
@@ -83,16 +75,17 @@ export const callRoom = async (roomId: string) => {
     return;
   }
 
-  const number = await getRoomNumber(roomId);
-  if (number === null) {
-    console.error(`Could not find a phone number for room ID: ${roomId}`);
-    return;
-  }
-
-  const credentials = Buffer.from(`${username}:${password}`).toString('base64');
-  const params = new URLSearchParams({ number }).toString();
-
   try {
+    const phoneNumber = await getPhoneNumber(roomId);
+
+    if (!phoneNumber) {
+      console.error(`Phone number not found for room ID: ${roomId}`);
+      return;
+    }
+
+    const credentials = Buffer.from(`${username}:${password}`).toString('base64');
+    const params = new URLSearchParams({ phoneNumber }).toString();
+
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -110,6 +103,6 @@ export const callRoom = async (roomId: string) => {
       console.log('Wildix API call OK');
     }
   } catch (err) {
-    console.error('Error during the API Wildix PBX call', err);
+    console.error('Error during the API Wildix PBX call:', err);
   }
 }

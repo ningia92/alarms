@@ -1,11 +1,18 @@
 import { WebSocketServer } from 'ws';
 
 import { setAlarmStatus } from '../services/alarm-service.js';
-import { callRoom, getRoomList } from '../services/room-service.js';
+import { callRoom, checkRoomExists, getRoomList } from '../services/room-service.js';
 import { createWebSocketMessage, sendMessageToClient } from './messages.js';
 
 // called by alarms controller when an alarm is activated
 export const handleAlarmOn = async (wss: WebSocketServer, roomId: string, timestamp: string) => {
+  const existsRoom = await checkRoomExists(roomId);
+
+  if (!existsRoom) {
+    console.error('Room ID not found');
+    return;
+  }
+
   // if the alarm is not coming from the pool (00-00)
   // make a call to the room phone that activated the alarm
   if (roomId !== '00-00') await callRoom(roomId);
@@ -26,14 +33,22 @@ export const handleAlarmOn = async (wss: WebSocketServer, roomId: string, timest
 export const handleAlarmOff = async (wss: WebSocketServer, clientMessage: AlarmOffMessage, timestamp: string) => {
   const { roomId, reason } = clientMessage;
 
+  const existsRoom = await checkRoomExists(roomId);
+
+  if (!existsRoom) {
+    console.error('Room ID not found');
+    return;
+  }
+
   // set status field of the alarm to "off" into redis db
   // lastDeactivation is used only for logs
   await setAlarmStatus(roomId, 'off', timestamp, reason);
 
   try {
     const roomList = await getRoomList();
+
     const message = createWebSocketMessage('room_list', { roomList });
-    
+
     wss.clients.forEach(client => {
       sendMessageToClient(client, message);
     });

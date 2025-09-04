@@ -7,7 +7,7 @@ export const authorizeDevice = (req: Request, res: Response, next: NextFunction)
 
   if (!IP_REGEX) {
     console.error('IP_REGEX environment variable si not defined');
-    throw new Error('Server configuration error');
+    return;
   }
 
   // =================================================================================
@@ -16,9 +16,7 @@ export const authorizeDevice = (req: Request, res: Response, next: NextFunction)
   const isAuthorized = ip?.match(IP_REGEX) ?? ip === '::1';
 
   if (!isAuthorized) {
-    const error = new Error('Forbidden resource');
-    error.statusCode = 403;
-    throw error;
+    res.status(403).json({ message: 'Forbidden resource' });
   } else {
     next();
   }

@@ -1,13 +1,11 @@
 import fs from 'fs/promises';
 
-import { getRedisClient } from '../db/redis-client.js';
-
-const redisClient = getRedisClient();
+import { getRoomType } from '../db/room-repository.js';
 
 const writeFile = async (data: string) => {
   try {
     // because the server is launched from top-level directory, the file
-    // path needs to start with single dot "./" and not double dot "../"
+    // path needs to start with single dot "./" and not with double dot "../"
     await fs.writeFile('./logs/alarm-logs.txt', data, { flag: 'a+' });
   } catch (err) {
     console.error('Error while writing logs:', err);
@@ -15,9 +13,11 @@ const writeFile = async (data: string) => {
 }
 
 // write logs
-export const alarmLogger = async (id: string, status: string, timestamp: string, isOn = false, reason = '') => {
-  const roomType = await redisClient.hGet(`room:${id}`, 'type');
+export const alarmLogger = async (roomId: string, status: string, timestamp: string, isOn = false, reason = '') => {
+  const roomType = await getRoomType(roomId);
+
   const formatDate = new Date(timestamp).toLocaleString();
+  
   let description = '';
 
   if (status === 'on' && isOn) {
@@ -34,6 +34,7 @@ export const alarmLogger = async (id: string, status: string, timestamp: string,
     description = 'Allarme non raggiungibile';
   }
 
-  const log = `${formatDate} [ ${roomType === 'room' ? 'Camera ' + id : 'Piscina'} ] => ${status} (${description})\n`;
+  const log = `${formatDate} [ ${roomType === 'room' ? 'Camera ' + roomId : 'Piscina'} ] => ${status} (${description})\n`;
+  
   await writeFile(log);
 }
