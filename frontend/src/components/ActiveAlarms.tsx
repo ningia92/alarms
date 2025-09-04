@@ -41,13 +41,13 @@ const ActiveAlarms: React.FC<ActiveAlarmsProps> = ({ rooms, onDeactivate }) => {
                   key={room.id}
                   className="flex items-center justify-between p-4 bg-danger-50 dark:bg-danger-500/10 rounded-lg"
                 >
-                  <span className="text-lg font-bold text-danger-700 dark:text-danger-200">
+                  <span className="text-sm md:text-md lg:text-lg font-bold text-danger-700 dark:text-danger-200">
                     {room.type === "room" ? `Camera ${room.id}` : "Piscina"}
                   </span>
 
                   <div className="flex flex items-center gap-4">
-                    <div className="flex items-center text-danger-500 dark:text-danger-400 animate-pulse">
-                      <BellIcon className="w-5 h-5 mr-1.5" />
+                    <div className="flex items-center text-sm md:text-md text-danger-500 dark:text-danger-400 animate-pulse">
+                      <BellIcon className="w-4 h-4 mr-1.5" />
                       <span>
                         {new Date(room.alarm.lastActivation).toLocaleString().split(' ')[1]}
                       </span>
