@@ -3,7 +3,7 @@ import { getRedisClient } from './redis-client.js';
 
 const redisClient: RedisClientType = getRedisClient();
 
-const getRoomKey = (roomId: string): string => `room:${roomId}`;
+export const getRoomKey = async (roomId: string): Promise<string> => `room:${roomId}`;
 
 export const getRoomKeys = async (): Promise<string[]> => {
   const keyList: string[] = [];
@@ -24,11 +24,11 @@ export const getRoomData = async (roomKey: string): Promise<Record<string, strin
 }
 
 export const getPhoneNumber = async (roomId: string): Promise<string | null> => {
-  return await redisClient.hGet(getRoomKey(roomId), 'phone');
+  return await redisClient.hGet(await getRoomKey(roomId), 'phone');
 }
 
 export const getRoomType = async (roomId: string): Promise<string | null> => {
-  return await redisClient.hGet(getRoomKey(roomId), 'type');
+  return await redisClient.hGet(await getRoomKey(roomId), 'type');
 }
 
 // return 1 if exists, 0 if not exists

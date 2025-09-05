@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { getRoomKeys, getRoomData, roomExists, getPhoneNumber } from '../db/room-repository.js';
+import { getRoomKey, getRoomKeys, getRoomData, roomExists, getPhoneNumber } from '../db/room-repository.js';
 import { getAlarmData } from '../db/alarm-repository.js';
 
 // type guard to verify at runtime that an unknown value has the expected properties of the redis room hash
@@ -50,17 +50,43 @@ export const getRoomList = async (): Promise<Room[]> => {
   }
 }
 
+export const getRoom = async (roomId: string): Promise<Room> => {
+  try {
+    const roomKey = await getRoomKey(roomId);
+    const rawRoom = await getRoomData(roomKey);
+
+    if (!isRedisRoomHash(rawRoom)) {
+      console.error('Invalid room data');
+      throw new Error('Invalid room data');
+    }
+    
+    const alarmDetails = await getAlarmData(rawRoom.alarm);
+
+    if (!isAlarm(alarmDetails)) {
+      console.error(`Invalid alarm data for room ${rawRoom.id}`);
+      throw new Error(`Invalid alarm data for room ${rawRoom.id}`);
+    }
+
+    const completeRoom: Room = { ...rawRoom, alarm: alarmDetails };
+
+    return completeRoom;
+  } catch (err) {
+    console.error('Error during get the room:', err);
+    throw err;
+  }
+}
+
 export const checkRoomExists = async (roomId: string): Promise<boolean> => {
   try {
     const isRoomExistent = await roomExists(roomId);
-  
+
     if (isRoomExistent === 0) {
       return false;
     }
   } catch (err) {
     console.error('Error during check existence of the room:', err);
   }
-  
+
   return true;
 }
 

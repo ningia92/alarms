@@ -37,8 +37,6 @@ export const turnOffAlarm = async (req: Request, res: Response) => {
     res.status(400).end();
   }
 
-  await handleAlarmOn(req.wss, roomId, timestamp);
-
   const message: AlarmOffMessage = {
     type: 'alarm_off',
     roomId,

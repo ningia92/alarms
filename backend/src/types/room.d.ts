@@ -4,6 +4,7 @@
 
 type AlarmStatus = 'on' | 'off' | 'down';
 
+// dev: used to configure alarm device
 interface Alarm {
   ip: string;
   dev: string;
@@ -12,6 +13,8 @@ interface Alarm {
   lastActivation: string;
 }
 
+// type: used to differentiate between room and pool
+// block: used to divide rooms into sections
 // block and phone are optional because the pool doesn't has them
 interface Room {
   id: string;

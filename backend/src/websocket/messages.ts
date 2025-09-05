@@ -10,13 +10,6 @@ export const createWebSocketMessage = (
   let message: WebSocketMessage = { type };
 
   switch (type) {
-    case 'alarm_down':
-      message = {
-        type,
-        roomId: options.roomId,
-        status: 'down'
-      } as AlarmDownMessage;
-      break;
     case 'alarm_on':
       message = {
         type,
@@ -24,6 +17,13 @@ export const createWebSocketMessage = (
         status: 'on',
         lastActivation: options.timestamp
       } as AlarmOnMessage;
+      break;
+    case 'alarm_down':
+      message = {
+        type,
+        roomId: options.roomId,
+        status: 'down'
+      } as AlarmDownMessage;
       break;
     case 'room_list':
       message = {
