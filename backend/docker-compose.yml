@@ -1,0 +1,21 @@
+services:
+  redis:
+    container_name: redis-db
+    image: redis
+    ports:
+      - 6379:6379
+    command: ['redis-server', '--appendonly', 'yes']
+    volumes:
+      - ./redis_data:/data
+  app:
+    container_name: alarms-app
+    image: alarms-image
+    env_file:
+      - ".env"
+    build: .
+    ports:
+      - 3000:3000
+    volumes:
+      - ./logs:/usr/src/app/logs
+    depends_on:
+      - redis

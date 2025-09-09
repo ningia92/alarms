@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { handleAlarmOff, handleAlarmOn } from '../websocket/alarm-handler.js';
 
 // @desc Turn on alarm
-// @route GET /room/:id/alarm/on
+// @route GET /rooms/:id/alarm/on
 export const turnOnAlarm = async (req: Request, res: Response) => {
   const roomId = req.params.id;
   const timestamp = new Date().toISOString();
@@ -27,7 +27,7 @@ export const turnOnAlarm = async (req: Request, res: Response) => {
 }
 
 // @desc Turn off alarm from the alarm device
-// @route GET /room/:id/alarm/off
+// @route GET /rooms/:id/alarm/off
 export const turnOffAlarm = async (req: Request, res: Response) => {
   const roomId = req.params.id;
   const timestamp = new Date().toISOString();

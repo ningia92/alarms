@@ -33,7 +33,7 @@ app.use(express.json());
 app.use(cors());
 
 // route for the endpoint exposed to alarm devices
-app.use('/room', alarmDeviceRouter);
+app.use('/rooms', alarmDeviceRouter);
 
 const PORT: string = process.env.PORT ?? '3000';
 server.listen(PORT, () => {

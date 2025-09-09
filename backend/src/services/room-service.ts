@@ -52,7 +52,7 @@ export const getRoomList = async (): Promise<Room[]> => {
 
 export const getRoom = async (roomId: string): Promise<Room> => {
   try {
-    const roomKey = await getRoomKey(roomId);
+    const roomKey = getRoomKey(roomId);
     const rawRoom = await getRoomData(roomKey);
 
     if (!isRedisRoomHash(rawRoom)) {

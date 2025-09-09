@@ -45,20 +45,7 @@ export const createWebSocketMessage = (
 export const sendMessageToClient = (client: WebSocket, message: WebSocketMessage) => {
   if (client.readyState === WebSocket.OPEN) {
     client.send(JSON.stringify(message));
-  } else {
-    let state: string;
-    switch (client.readyState) {
-      case WebSocket.CLOSED:
-        state = 'CLOSED';
-        break;
-      case WebSocket.CLOSING:
-        state = 'CLOSING';
-        break;
-      case WebSocket.CONNECTING:
-        state = 'CONNECTING';
-        break;
-    }
-
-    console.error(`Client not available (state=${state})`);
+  } else if (client.readyState === WebSocket.CLOSED) {
+    console.error(`Client not available state = CLOSED)`);
   }
 }

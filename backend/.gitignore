@@ -2,13 +2,16 @@
 .env
 
 # Dependencies
-node_modules/
+node_modules
 
 # DB data
 src/db/data.json
 
 # Logs
-logs/
+logs
 
 # Typescript build output
-dist/
+dist
+
+# Persistent redis data
+redis_data
