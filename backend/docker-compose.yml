@@ -1,21 +1,23 @@
 services:
   redis:
-    container_name: redis-db
     image: redis
+    container_name: redis-db
     ports:
       - 6379:6379
-    command: ['redis-server', '--appendonly', 'yes']
+    command: ['redis-server', '--appendonly', 'yes'] # overwrite the CMD, this make data persisting
     volumes:
-      - ./redis_data:/data
+      - ./redis_data:/data # volume to store redis data
+    restart: always # restart container if it stops
   app:
-    container_name: alarms-app
-    image: alarms-image
+    image: alarms-backend-image
+    container_name: alarms-backend
     env_file:
       - ".env"
     build: .
     ports:
       - 3000:3000
     volumes:
-      - ./logs:/usr/src/app/logs
+      - ./logs:/usr/src/app/logs # volume to store logs file
     depends_on:
       - redis
+    restart: always

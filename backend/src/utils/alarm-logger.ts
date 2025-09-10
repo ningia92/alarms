@@ -17,7 +17,7 @@ const writeFile = async (data: string) => {
 export const alarmLogger = async (roomId: string, status: string, timestamp: string, isOn = false, reason = '') => {
   const roomType = await getRoomType(roomId);
 
-  const formatDate = new Date(timestamp).toLocaleString();
+  const formatDate = new Date(timestamp).toLocaleString('it-IT', { timeZone: 'Europe/Rome' });
   
   let description = '';
 
