@@ -1,5 +1,7 @@
 #the first FROM is a stage called build-stage
-FROM node:22 AS build-stage
+FROM node:22-bullseye-slim AS build-stage
+
+RUN apt-get update && apt-get install -y --no-install-recommends
 
 WORKDIR /usr/src/app
 

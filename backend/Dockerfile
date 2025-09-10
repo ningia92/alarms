@@ -1,4 +1,6 @@
-FROM node:22
+FROM node:22-bullseye-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends
 
 USER node
 
