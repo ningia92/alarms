@@ -1,7 +1,9 @@
 {
-  "name": "client2",
-  "private": true,
-  "version": "0.0.0",
+  "name": "alarms-frontend",
+  "version": "1.0.0",
+  "description": "alarm system's frontend",
+  "license": "ISC",
+  "author": "Gian Marco Ninno",
   "type": "module",
   "scripts": {
     "dev": "vite",
