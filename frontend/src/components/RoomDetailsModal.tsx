@@ -69,7 +69,7 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ room, onClose }) =>
         <div className="pt-4 mt-4 text-right border-t border-zinc-200 dark:border-zinc-700">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-semibold text-white bg-primary-800 rounded-md hover:bg-primary-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-100 dark:focus:ring-offset-zinc-800 focus:ring-primary-500"
+            className="px-4 py-2 text-sm font-semibold text-zinc-200 bg-primary-500 rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-100 dark:focus:ring-offset-zinc-800 focus:ring-primary-500"
           >
             Chiudi
           </button>

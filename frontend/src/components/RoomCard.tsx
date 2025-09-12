@@ -41,7 +41,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onDeactivate }) => {
         <div className="flex flex-col space-y-2">
           <button
             onClick={() => setModalOpen(true)}
-            className="px-3 py-1 text-sm font-semibold text-white bg-primary-700 rounded-md hover:bg-primary-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-100 dark:focus:ring-offset-zinc-800 focus:ring-primary-500"
+            className="px-3 py-1 text-sm font-semibold text-zinc-200 bg-primary-600 rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-100 dark:focus:ring-offset-zinc-800 focus:ring-primary-500"
           >
             Dettagli
           </button>

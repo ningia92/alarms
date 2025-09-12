@@ -139,7 +139,7 @@ const App: React.FC = () => {
         </div>
       </main>
       <footer className="text-center py-4 text-slate-500 dark:text-slate-400 text-sm">
-        <p>© {new Date().getFullYear()} VOIhotels · App sviluppata da Willo</p>
+        <p>© {new Date().getFullYear()} <a href="https://www.voihotels.com/" target="_blank">VOIhotels</a> · Web App sviluppata da <a href="https://www.willo.it/" target="_blank">Willo</a></p>
       </footer>
     </div>
   );
