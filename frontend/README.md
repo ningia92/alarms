@@ -8,7 +8,7 @@ This frontend is a modern, responsive dashboard built with **React**, **Vite**, 
 -   **Interactive UI Components**: The interface is composed of several key components:
     -   **`Summary`**: Displays high-level statistics, including the total number of rooms, active alarms, safe rooms, and unreachable devices.
     -   **`ActiveAlarms`**: A dedicated section that lists all currently active alarms, sorted by the most recent, allowing for quick identification and action.
-    -   **`RoomList`**: Organizes all rooms by block (11, 12, 13, 14, and Pool) within collapsible accordion sections. Each room is represented by a `RoomCard`.
+    -   **`RoomList`**: Organizes all rooms by block (1, 2, 3, 4) within collapsible accordion sections. Each room is represented by a `RoomCard`.
 -   **Alarm Management**: Users can deactivate alarms directly from the dashboard.
     -   The `DeactivationAlarmModal` prompts for a reason before deactivating a room alarm, ensuring all actions are logged.
     -   A `RoomDetailsModal` provides a comprehensive view of each room's details, including ID, block, phone number, and alarm status.

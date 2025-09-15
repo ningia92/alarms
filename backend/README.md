@@ -92,12 +92,11 @@ To run the backend service locally, you will need Node.js and npm installed.
 
 ## Data Structure (`data.json`)
 
-The `backend/src/db/data.json` file contains an array of objects, where each object represents a room or a pool. This data is used to populate the Redis database.
+The `backend/src/db/data.json` file contains an array of objects, where each object represents a room. This data is used to populate the Redis database.
 
 Each object has the following structure:
 
 -   **`id`**: A unique identifier for the room (e.g., "11-01").
--   **`type`**: The type of location, either "room" or "pool".
 -   **`block`**: The building block number (only for rooms).
 -   **`phone`**: The phone number associated with the room (only for rooms).
 -   **`alarm`**: An object containing the alarm device's configuration:
@@ -107,24 +106,12 @@ Each object has the following structure:
     -   **`status`**: The initial alarm status (e.g., "off").
     -   **`lastActivation`**: Timestamp of the last activation (initially empty).
 
-**Example:**
+**Example of json room:**
 ```json
 [
   {
-    "id": "00-00",
-    "type": "pool",
-    "alarm": {
-      "ip": "alarm_ip",
-      "dev": "relay",
-      "num": "0",
-      "status": "off",
-      "lastActivation": ""
-    }
-  },
-  {
-    "id": "11-01",
-    "type": "room",
-    "block": "11",
+    "id": "101",
+    "block": "1",
     "phone": "1101",
     "alarm": {
       "ip": "room_ip",
