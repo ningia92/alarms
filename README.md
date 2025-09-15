@@ -33,9 +33,9 @@ To get the entire system up and running, you will need **Docker** and **Docker C
     The system uses data from `backend/src/db/data.json` to configure the rooms and alarms in Redis. Before starting the services for the first time, you need to run the population script.
 
 4.  **Run with Docker Compose:**
-    From the root of the `alarms` directory, run the following command to build and start all containers:
+    From the root of the `backend` and `frontend` directories, run the following command to build and start the relative container:
     ```bash
-    docker-compose up --build
+    docker compose up
     ```
 
 5.  **Access the application:**
