@@ -10,7 +10,6 @@ interface Alarm {
 
 export interface Room {
   id: string;
-  type: string;
   block: string;
   phone: number;
   alarm: Alarm;

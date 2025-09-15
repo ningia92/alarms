@@ -9,11 +9,10 @@ interface RoomListProps {
 }
 
 const RoomList: React.FC<RoomListProps> = ({ rooms, onDeactivate }) => {
-  const pool = rooms.filter(room => room.type === 'pool');
-  const block11 = rooms.filter(room => room.block === '11');
-  const block12 = rooms.filter(room => room.block === '12');
-  const block13 = rooms.filter(room => room.block === '13');
-  const block14 = rooms.filter(room => room.block === '14');
+  const block1 = rooms.filter(room => room.block === '1');
+  const block2 = rooms.filter(room => room.block === '2');
+  const block3 = rooms.filter(room => room.block === '3');
+  const block4 = rooms.filter(room => room.block === '4');
 
   const renderRoomGrid = (blockOfRooms: Room[]) => {
     blockOfRooms.sort((room1, room2) => room1.phone - room2.phone)
@@ -33,20 +32,17 @@ const RoomList: React.FC<RoomListProps> = ({ rooms, onDeactivate }) => {
         Elenco Camere
       </h2>
       <div className="space-y-4">
-        <Accordion title="Blocco 11">
-          {renderRoomGrid(block11)}
+        <Accordion title="Blocco 1">
+          {renderRoomGrid(block1)}
         </Accordion>
-        <Accordion title="Blocco 12">
-          {renderRoomGrid(block12)}
+        <Accordion title="Blocco 2">
+          {renderRoomGrid(block2)}
         </Accordion>
-        <Accordion title="Blocco 13">
-          {renderRoomGrid(block13)}
+        <Accordion title="Blocco 3">
+          {renderRoomGrid(block3)}
         </Accordion>
-        <Accordion title="Blocco 14">
-          {renderRoomGrid(block14)}
-        </Accordion>
-        <Accordion title="Piscina">
-          {renderRoomGrid(pool)}
+        <Accordion title="Blocco 4">
+          {renderRoomGrid(block4)}
         </Accordion>
       </div>
     </section>

@@ -10,8 +10,6 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ room, onClose }) =>
   const isOn = room.alarm.status === 'on';
   const isOff = room.alarm.status === 'off';
   const isDown = room.alarm.status === 'down';
-
-  const roomType = room.type === 'room' ? `Camera ${String(room.phone).slice(2)}` : "Piscina";
   const lastActivation = new Date(room.alarm.lastActivation).toLocaleString();
 
   return (
@@ -25,7 +23,7 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ room, onClose }) =>
       >
         <div className="flex items-start justify-between pb-4 border-b border-zinc-200 dark:border-zinc-700">
           <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
-            Dettagli {roomType}
+            Dettagli camera {room.id}
           </h3>
           <button
             onClick={onClose}
@@ -43,11 +41,11 @@ const RoomDetailsModal: React.FC<RoomDetailsModalProps> = ({ room, onClose }) =>
           </div>
           <div className="flex justify-between">
             <span className="font-medium text-zinc-600 dark:text-zinc-400">Blocco:</span>
-            <span className="text-zinc-800 dark:text-zinc-200">{room.type === 'room' ? room.block : '-'}</span>
+            <span className="text-zinc-800 dark:text-zinc-200">{room.block}</span>
           </div>
           <div className="flex justify-between">
             <span className="font-medium text-zinc-600 dark:text-zinc-400">Telefono:</span>
-            <span className="text-zinc-800 dark:text-zinc-200">{room.type === 'room' ? room.phone : '-'}</span>
+            <span className="text-zinc-800 dark:text-zinc-200">{room.phone}</span>
           </div>
           <div className="flex justify-between">
             <span className="font-medium text-zinc-600 dark:text-zinc-400">Stato allarme:</span>

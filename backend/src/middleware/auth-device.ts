@@ -6,7 +6,7 @@ export const authorizeDevice = (req: Request, res: Response, next: NextFunction)
   const IP_REGEX = process.env.IP_REGEX;
 
   if (!IP_REGEX) {
-    console.error('IP_REGEX environment variable si not defined');
+    console.error('IP_REGEX environment variable not defined');
     return;
   }
 

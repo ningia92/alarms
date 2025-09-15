@@ -15,8 +15,6 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onDeactivate }) => {
   const isOn = room.alarm.status === 'on';
   const isOff = room.alarm.status === 'off';
   const isDown = room.alarm.status === 'down';
-  
-  const roomType = room.type === 'room' ? `Camera ${room.id.split('-')[1]}` : 'Piscina';
 
   return (
     <>
@@ -35,7 +33,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onDeactivate }) => {
             title={`Stato: ${isOn && 'Attivo' || isOff && 'Inattivo' || isDown && 'Non raggiungibile'}`}
           ></span>
           <span className="font-medium text-zinc-700 dark:text-zinc-300">
-            {roomType}
+            Camera {room.id}
           </span>
         </div>
         <div className="flex flex-col space-y-2">
@@ -48,10 +46,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onDeactivate }) => {
           
           {isOn && (
             <button
-              onClick={room.type === 'room'
-                ? () => setDeactivationAlarmModalOpen(true)
-                : () => onDeactivate(room.id)
-              }
+              onClick={() => setDeactivationAlarmModalOpen(true)}
               className="px-3 py-1 text-sm font-semibold text-white bg-danger-500 rounded-md hover:bg-danger-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-danger-100 dark:focus:ring-offset-zinc-800 focus:ring-danger-500"
             >
               Disattiva

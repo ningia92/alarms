@@ -3,7 +3,6 @@ import type { Room } from '../types';
 
 const DEACTIVATION_REASONS = [
   'Falso allarme',
-  'Intervento del personale autorizzato',
   'Tentativo di risoluzione da reception',
   'Allarme risolto da manutentore',
 ];

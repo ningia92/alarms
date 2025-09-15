@@ -42,7 +42,7 @@ const ActiveAlarms: React.FC<ActiveAlarmsProps> = ({ rooms, onDeactivate }) => {
                   className="flex items-center justify-between p-4 bg-danger-50 dark:bg-danger-500/10 rounded-lg"
                 >
                   <span className="text-sm md:text-md lg:text-lg font-bold text-danger-700 dark:text-danger-200">
-                    {room.type === "room" ? `Camera ${room.id}` : "Piscina"}
+                    {`Camera ${room.id}`}
                   </span>
 
                   <div className="flex flex items-center gap-4">
@@ -53,10 +53,7 @@ const ActiveAlarms: React.FC<ActiveAlarmsProps> = ({ rooms, onDeactivate }) => {
                       </span>
                     </div>
                     <button
-                      onClick={room.type === 'room'
-                        ? () => setRoomToDeactivate(room)
-                        : () => handleDeactivate(room.id)
-                      }
+                      onClick={() => setRoomToDeactivate(room)}
                       className="px-4 py-2 text-sm font-bold text-white bg-danger-500 rounded-lg hover:bg-danger-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-danger-50 dark:focus:ring-offset-zinc-800 focus:ring-danger-500 shrink-0"
                     >
                       Disattiva
