@@ -14,7 +14,7 @@ export const getRoomKeys = async (): Promise<string[]> => {
   }
 
   // regex to filter only the room keys (excluding alarm keys)
-  const roomRegex = /^room:(\d){2}-(\d){2}$/g;
+  const roomRegex = /^room:(\d){3}$/g;
 
   return keyList.filter((key: string) => key.match(roomRegex));
 }
@@ -25,10 +25,6 @@ export const getRoomData = async (roomKey: string): Promise<Record<string, strin
 
 export const getPhoneNumber = async (roomId: string): Promise<string | null> => {
   return await redisClient.hGet(getRoomKey(roomId), 'phone');
-}
-
-export const getRoomType = async (roomId: string): Promise<string | null> => {
-  return await redisClient.hGet(getRoomKey(roomId), 'type');
 }
 
 // return 1 if exists, 0 if not exists

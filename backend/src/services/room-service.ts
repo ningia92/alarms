@@ -4,7 +4,7 @@ import { getAlarmData } from '../db/alarm-repository.js';
 
 // type guard to verify at runtime that an unknown value has the expected properties of the redis room hash
 const isRedisRoomHash = (obj: unknown): obj is RedisRoomHash => {
-  return typeof obj === 'object' && obj !== null && 'id' in obj && 'type' in obj && 'alarm' in obj;
+  return typeof obj === 'object' && obj !== null && 'id' in obj && 'alarm' in obj;
 };
 
 // type guard to verify at runtime that an unknown value has the expected properties of the alarm

@@ -18,7 +18,6 @@ interface Alarm {
 // block and phone are optional because the pool doesn't has them
 interface Room {
   id: string;
-  type: string;
   block?: string;
   phone?: string;
   alarm: Alarm;
@@ -36,7 +35,6 @@ interface RedisAlarmHash {
 // raw data for Redis room hash
 interface RedisRoomHash {
   id: string;
-  type: string;
   block?: string;
   phone?: string;
   alarm: string; // This corresponds to the key of the Redis alarm hash

@@ -13,9 +13,8 @@ export const handleAlarmOn = async (wss: WebSocketServer, roomId: string, timest
     return;
   }
 
-  // if the alarm is not coming from the pool (00-00)
-  // make a call to the room phone that activated the alarm
-  if (roomId !== '00-00') await callRoom(roomId);
+  // make a call to the room phone from which has been activated the alarm
+  await callRoom(roomId);
 
   // set status field of alarm to "on" into redis db
   await setAlarmStatus(roomId, 'on', timestamp);

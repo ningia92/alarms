@@ -1,7 +1,5 @@
 import fs from 'fs/promises';
 
-import { getRoomType } from '../db/room-repository.js';
-
 const writeFile = async (data: string) => {
   try {
     // because the server is launched from top-level directory, the file
@@ -15,8 +13,6 @@ const writeFile = async (data: string) => {
 
 // write logs
 export const alarmLogger = async (roomId: string, status: string, timestamp: string, isOn = false, reason = '') => {
-  const roomType = await getRoomType(roomId);
-
   const formatDate = new Date(timestamp).toLocaleString('it-IT', { timeZone: 'Europe/Rome' });
   
   let description = '';
@@ -24,18 +20,14 @@ export const alarmLogger = async (roomId: string, status: string, timestamp: str
   if (status === 'on' && isOn) {
     description = 'Allarme ripetuto';
   } else if (status === 'on') {
-    description = roomType === 'pool'
-      ? 'Allarme attivato - Livello acqua troppo alto'
-      : 'Allarme attivato';
+    description = 'Allarme attivato';
   } else if (status === 'off') {
-    description = roomType === 'pool'
-      ? 'Allarme disattivato - Livello acqua nella norma'
-      : (reason === 'Allarme nuovamente raggiungibile') ? reason : `Allarme disattivato: ${reason}`;
+    description = (reason === 'Allarme nuovamente raggiungibile') ? reason : `Allarme disattivato: ${reason}`;
   } else if (status === 'down') {
     description = 'Allarme non raggiungibile';
   }
 
-  const log = `${formatDate} [ ${roomType === 'room' ? 'Camera ' + roomId : 'Piscina'} ] => ${status} (${description})\n`;
+  const log = `${formatDate} [ Camera ${roomId} ] => ${status} (${description})\n`;
   
   await writeFile(log);
 }
