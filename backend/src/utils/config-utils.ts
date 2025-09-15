@@ -11,7 +11,7 @@ export const getDeviceUrl = async (roomId: string): Promise<string> => {
   return `http://${alarmIp}/settings/${alarmDev}/${alarmNum}`;
 }
 
-export const getRequestList = (roomId: string): {param: string, url: string}[] => {
+export const getRequestList = (roomId: string): { param: string, url: string }[] => {
   const serverIp = process.env.SERVER_IP ?? 'localhost';
   const port = process.env.PORT ?? '3000';
 
@@ -36,16 +36,16 @@ export const getRequestList = (roomId: string): {param: string, url: string}[] =
 
 export const makeRequests = async (
   configurationUrl: string,
-  requests: {param: string, url: string}[]): Promise<boolean> => {
+  requests: { param: string, url: string }[]): Promise<boolean> => {
   // execute requests in parallel (more efficient)
   const results = await Promise.all(
-    requests.map(async (request: {param: string, url: string}) => {
+    requests.map(async (request: { param: string, url: string }) => {
       const fullUrl = `${configurationUrl}?${request.param}=${request.url}`;
       const response = await fetch(fullUrl);
-  
+
       return response.status;
     })
   );
-  
+
   return results.every(status => status === 200);
 }
