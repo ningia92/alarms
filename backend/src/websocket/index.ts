@@ -69,7 +69,7 @@ export const initializeWebSocketServer = (server: HttpServer): WebSocketServer =
   // terminate the broken connections for dead clients and
   // send a 'ping' to the others, if they repond with a 'pong'
   // the event 'pong' will return isAlive to true with the function heartBeat
-  const ping = () => {
+  const ping = (): void => {
     wss.clients.forEach((ws: WebSocket) => {
       if (!ws.isAlive) {
         ws.terminate();

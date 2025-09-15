@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
 // middleware that check if the ip of the client is one of the alarm devices
-export const authorizeDevice = (req: Request, res: Response, next: NextFunction) => {
+export const authorizeDevice = (req: Request, res: Response, next: NextFunction): void => {
   const ip = req.ip;
   const IP_REGEX = process.env.IP_REGEX;
 

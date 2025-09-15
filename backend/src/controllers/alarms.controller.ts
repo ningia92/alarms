@@ -4,7 +4,7 @@ import { handleAlarmOff, handleAlarmOn } from '../websocket/alarm-handler.js';
 
 // @desc Turn on alarm
 // @route GET /rooms/:id/alarm/on
-export const turnOnAlarm = async (req: Request, res: Response) => {
+export const turnOnAlarm = async (req: Request, res: Response): Promise<void> => {
   const roomId = req.params.id;
   const timestamp = new Date().toISOString();
 
@@ -28,7 +28,7 @@ export const turnOnAlarm = async (req: Request, res: Response) => {
 
 // @desc Turn off alarm from the alarm device
 // @route GET /rooms/:id/alarm/off
-export const turnOffAlarm = async (req: Request, res: Response) => {
+export const turnOffAlarm = async (req: Request, res: Response): Promise<void> => {
   const roomId = req.params.id;
   const timestamp = new Date().toISOString();
 

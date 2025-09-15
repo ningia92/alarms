@@ -42,7 +42,7 @@ export const createWebSocketMessage = (
   return message;
 }
 
-export const sendMessageToClient = (client: WebSocket, message: WebSocketMessage) => {
+export const sendMessageToClient = (client: WebSocket, message: WebSocketMessage): void => {
   if (client.readyState === WebSocket.OPEN) {
     client.send(JSON.stringify(message));
   } else if (client.readyState === WebSocket.CLOSED) {

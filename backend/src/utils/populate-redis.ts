@@ -3,7 +3,7 @@ import { getRedisClient } from '../db/redis-client.js';
 
 const redisClient = getRedisClient();
 
-const flushDB = async () => redisClient.flushDb();
+const flushDB = async (): Promise<string> => redisClient.flushDb();
 
 // into the DB the rooms data are stored as hashes
 // room and alarm are stored in separate hashes:
@@ -11,7 +11,7 @@ const flushDB = async () => redisClient.flushDb();
 // inside the room hash there is the "alarm" field
 // which in turn is an hash key
 // the alarm is represented by the key "room:{roomId}:alarm"
-const loadData = async () => {
+const loadData = async (): Promise<void> => {
   console.log('Flushing database before loading data');
   await flushDB();
 
@@ -26,7 +26,7 @@ const loadData = async () => {
   }
 }
 
-const runDataLoader = async () => {
+const runDataLoader = async (): Promise<void> => {
   try {
     await loadData();
     console.log('Data load completed');

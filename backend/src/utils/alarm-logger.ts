@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 
-const writeFile = async (data: string) => {
+const writeFile = async (data: string): Promise<void> => {
   try {
     // because the server is launched from top-level directory, the file
     // path needs to start with single dot "./" and not with double dot "../"
@@ -12,7 +12,12 @@ const writeFile = async (data: string) => {
 }
 
 // write logs
-export const alarmLogger = async (roomId: string, status: string, timestamp: string, isOn = false, reason = '') => {
+export const alarmLogger = async (
+  roomId: string,
+  status: string,
+  timestamp: string,
+  isOn = false,
+  reason = ''): Promise<void> => {
   const formatDate = new Date(timestamp).toLocaleString('it-IT', { timeZone: 'Europe/Rome' });
   
   let description = '';

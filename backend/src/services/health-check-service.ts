@@ -9,7 +9,7 @@ const CHECK_INTERVAL = 30000;
 
 // send an HTTP HEAD to the alarm device to check if it's up
 // if the device does not respond change its status to down
-const isAlarmUp = async (alarm: Alarm) => {
+const isAlarmUp = async (alarm: Alarm): Promise<boolean | undefined> => {
   const { ip, dev, num } = alarm;
   const url = `http://${ip}/${dev}/${num}`;
 
@@ -25,7 +25,7 @@ const isAlarmUp = async (alarm: Alarm) => {
   }
 }
 
-const deviceHealthChecks = async (wss: WebSocketServer) => {
+const deviceHealthChecks = async (wss: WebSocketServer): Promise<void> => {
   try {
     const rooms = await getRoomList();
 
@@ -54,7 +54,7 @@ const deviceHealthChecks = async (wss: WebSocketServer) => {
 }
 
 // start periodic checks
-export const startPeriodicDeviceChecks = (wss: WebSocketServer) => {
+export const startPeriodicDeviceChecks = (wss: WebSocketServer): void => {
   console.log('Periodic checks of alarm devices...');
 
   setInterval(() => {

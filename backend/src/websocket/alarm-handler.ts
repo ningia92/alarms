@@ -5,7 +5,10 @@ import { callRoom, checkRoomExists, getRoomList } from '../services/room-service
 import { createWebSocketMessage, sendMessageToClient } from './messages.js';
 
 // called by alarms controller when an alarm is activated
-export const handleAlarmOn = async (wss: WebSocketServer, roomId: string, timestamp: string) => {
+export const handleAlarmOn = async (
+  wss: WebSocketServer,
+  roomId: string,
+  timestamp: string): Promise<void> => {
   const existsRoom = await checkRoomExists(roomId);
 
   if (!existsRoom) {
@@ -29,7 +32,10 @@ export const handleAlarmOn = async (wss: WebSocketServer, roomId: string, timest
 // called by main wss function when a ws client send the "turn off" alarm message
 // called by alarms controller when an alarm is turned off by the alarm device
 // called by health check service when an alarm is newly reachable
-export const handleAlarmOff = async (wss: WebSocketServer, clientMessage: AlarmOffMessage, timestamp: string) => {
+export const handleAlarmOff = async (
+  wss: WebSocketServer,
+  clientMessage: AlarmOffMessage,
+  timestamp: string): Promise<void> => {
   const { roomId, reason } = clientMessage;
 
   const existsRoom = await checkRoomExists(roomId);
@@ -57,7 +63,10 @@ export const handleAlarmOff = async (wss: WebSocketServer, clientMessage: AlarmO
 }
 
 // called by health check service that is executed periodically
-export const handleAlarmDown = async (wss: WebSocketServer, roomId: string, timestamp: string) => {
+export const handleAlarmDown = async (
+  wss: WebSocketServer,
+  roomId: string,
+  timestamp: string): Promise<void> => {
   await setAlarmStatus(roomId, 'down', timestamp);
 
   const message = createWebSocketMessage('alarm_down', { roomId });
