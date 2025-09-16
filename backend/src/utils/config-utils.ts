@@ -2,16 +2,24 @@ import fetch from 'node-fetch';
 
 import { getRoom } from '../services/room-service.js';
 
+// The shelly i3 has 3 indipendent input channels which can operate with all types of toggle and
+// momentary AC switches.
+// Shelly i3 can detect and announce not only simple ON/OFF state changes, but also complex (multipush) input events,
+// for example double shortpush, shortpush + longpush, etc. For each of this events Shelly i3 can invoke 
+// user-configurable action URLs.
+// For more information see https://shelly-api-docs.shelly.cloud/gen1/?shell#shelly-i3-input-events
+
+// return the url used to configure alarm device
 export const getDeviceUrl = async (roomId: string): Promise<string> => {
   const room: Room = await getRoom(roomId);
   const alarmIp = room.alarm.ip;
-  const alarmDev = room.alarm.dev;
-  const alarmNum = room.alarm.num;
+  const inputChannel = room.alarm.inputChannel;
 
-  return `http://${alarmIp}/settings/${alarmDev}/${alarmNum}`;
+  return `http://${alarmIp}/settings/input/${inputChannel}`;
 }
 
-export const getRequestList = (roomId: string): { param: string, url: string }[] => {
+// return the list of configuratiob params 
+export const getParamsList = (roomId: string): { param: string, url: string }[] => {
   const serverIp = process.env.SERVER_IP ?? 'localhost';
   const port = process.env.PORT ?? '3000';
 

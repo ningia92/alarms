@@ -1,4 +1,4 @@
-import { getDeviceUrl, getRequestList, makeRequests } from './config-utils.js';
+import { getDeviceUrl, getParamsList, makeRequests } from './config-utils.js';
 import { getRoom } from '../services/room-service.js';
 
 const configureAlarm = async (roomId: string): Promise<void> => {
@@ -7,9 +7,9 @@ const configureAlarm = async (roomId: string): Promise<void> => {
 
     const configurationUrl = await getDeviceUrl(room.id);
 
-    const requests = getRequestList(room.id);
+    const params = getParamsList(room.id);
 
-    const statusOk = await makeRequests(configurationUrl, requests);
+    const statusOk = await makeRequests(configurationUrl, params);
 
     if (statusOk) {
       console.log('Alarm device configuration successful');
@@ -21,7 +21,8 @@ const configureAlarm = async (roomId: string): Promise<void> => {
   }
 }
 
-const roomId: string = process.argv[0];
+// access the first command-line argument, that should corresponds to room id
+const roomId: string = process.argv[2];
 
 if (!roomId) {
   console.error('Please, provide a correct room id');

@@ -13,7 +13,9 @@ export const authorizeDevice = (req: Request, res: Response, next: NextFunction)
   // ====================================================================================
   // ::1 AND ::ffff:172.18.0.1 ARE ONLY FOR DEVELOPMENT PURPOSE. REMOVE IT IN PRODUCTION!
   // ====================================================================================
-  const isAuthorized = ip?.match(IP_REGEX) ?? (ip === '::1' || ip === '::ffff:172.18.0.1');
+  // const isAuthorized = ip?.match(IP_REGEX) ?? (ip === '::1' || ip === '::ffff:172.18.0.1');
+
+  const isAuthorized = ip?.match(IP_REGEX);
 
   if (!isAuthorized) {
     res.status(403).json({ message: 'Forbidden resource' });

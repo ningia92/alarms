@@ -1,4 +1,4 @@
-import { getDeviceUrl, getRequestList, makeRequests } from './config-utils.js';
+import { getDeviceUrl, getParamsList, makeRequests } from './config-utils.js';
 import { getRoomList } from '../services/room-service.js';
 
 // configure the behaviors of the alarms when they're activated
@@ -10,9 +10,9 @@ const configureAlarms = async (): Promise<void> => {
     for (const room of rooms) {
       const configurationUrl = await getDeviceUrl(room.id);
 
-      const requests = getRequestList(room.id);
+      const params = getParamsList(room.id);
 
-      const statusOk = await makeRequests(configurationUrl, requests);
+      const statusOk = await makeRequests(configurationUrl, params);
 
       if (statusOk) {
         console.log('Alarm device configuration successful');
