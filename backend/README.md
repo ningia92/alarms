@@ -101,8 +101,7 @@ Each object has the following structure:
 -   **`phone`**: The phone number associated with the room (only for rooms).
 -   **`alarm`**: An object containing the alarm device's configuration:
     -   **`ip`**: The IP address of the device.
-    -   **`dev`**: The device type (e.g., "input", "relay").
-    -   **`num`**: The device number.
+    -   **`inputChannel`**: The input channel of the device.
     -   **`status`**: The initial alarm status (e.g., "off").
     -   **`lastActivation`**: Timestamp of the last activation (initially empty).
 
@@ -115,8 +114,7 @@ Each object has the following structure:
     "phone": "1101",
     "alarm": {
       "ip": "room_ip",
-      "dev": "dev",
-      "num": "0",
+      "inputChannel": "0",
       "status": "off",
       "lastActivation": ""
     }
