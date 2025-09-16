@@ -4,11 +4,11 @@
 
 type AlarmStatus = 'on' | 'off' | 'down';
 
-// dev: used to configure alarm device
+// the alarms are shelly i3.
+// more info in the configuration script file src/utils/config-utils.ts
 interface Alarm {
   ip: string;
-  dev: string;
-  num: string;
+  inputChannel: string;
   status: AlarmStatus;
   lastActivation: string;
 }
@@ -26,8 +26,7 @@ interface Room {
 // raw data for Redis alarm hash
 interface RedisAlarmHash {
   ip: string;
-  dev: string;
-  num: string;
+  inputChannel: string;
   status: string;
   lastActivation: string;
 }

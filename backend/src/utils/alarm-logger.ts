@@ -16,13 +16,13 @@ export const alarmLogger = async (
   roomId: string,
   status: string,
   timestamp: string,
-  isOn = false,
+  oldStatus: string | null,
   reason = ''): Promise<void> => {
   const formatDate = new Date(timestamp).toLocaleString('it-IT', { timeZone: 'Europe/Rome' });
   
   let description = '';
 
-  if (status === 'on' && isOn) {
+  if (status === 'on' && oldStatus === 'on') {
     description = 'Allarme ripetuto';
   } else if (status === 'on') {
     description = 'Allarme attivato';

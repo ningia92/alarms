@@ -10,8 +10,8 @@ const CHECK_INTERVAL = 30000;
 // send an HTTP HEAD to the alarm device to check if it's up
 // if the device does not respond change its status to down
 const isAlarmUp = async (alarm: Alarm): Promise<boolean | undefined> => {
-  const { ip, dev, num } = alarm;
-  const url = `http://${ip}/${dev}/${num}`;
+  const { ip, inputChannel } = alarm;
+  const url = `http://${ip}/input/${inputChannel}`;
 
   try {
     const response = await fetch(url, {
@@ -35,17 +35,20 @@ const deviceHealthChecks = async (wss: WebSocketServer): Promise<void> => {
       const isUp = await isAlarmUp(alarm);
 
       const timestamp = new Date().toISOString();
+      
       if (!isUp) {
         await handleAlarmDown(wss, roomId, timestamp);
       } else {
-        const message: AlarmOffMessage = {
-          type: 'alarm_off',
-          roomId,
-          reason: 'Allarme nuovamente raggiungibile'
-        };
-        const timestamp = new Date().toISOString();
+        // if the alarm is reacheable and its status is down, set status to "off"
+        if (alarm.status === 'down') {
+          const message: AlarmOffMessage = {
+            type: 'alarm_off',
+            roomId,
+            reason: 'Allarme nuovamente raggiungibile'
+          };
 
-        await handleAlarmOff(wss, message, timestamp);
+          await handleAlarmOff(wss, message, timestamp);
+        }
       }
     }
   } catch (err) {

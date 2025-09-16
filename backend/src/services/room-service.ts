@@ -3,14 +3,14 @@ import { getRoomKey, getRoomKeys, getRoomData, roomExists, getPhoneNumber } from
 import { getAlarmData } from '../db/alarm-repository.js';
 
 // type guard to verify at runtime that an unknown value has the expected properties of the redis room hash
-const isRedisRoomHash = (obj: unknown): obj is RedisRoomHash => {
+const isRoomHashType = (obj: unknown): obj is RedisRoomHash => {
   return typeof obj === 'object' && obj !== null && 'id' in obj && 'alarm' in obj;
 };
 
 // type guard to verify at runtime that an unknown value has the expected properties of the alarm
-const isAlarm = (obj: unknown): obj is Alarm => {
+const isAlarmType = (obj: unknown): obj is Alarm => {
   return typeof obj === 'object' && obj !== null &&
-    'ip' in obj && 'dev' in obj && 'num' in obj && 'status' in obj && 'lastActivation' in obj;
+    'ip' in obj && 'inputChannel' in obj && 'status' in obj && 'lastActivation' in obj;
 };
 
 export const getRoomList = async (): Promise<Room[]> => {
@@ -27,14 +27,14 @@ export const getRoomList = async (): Promise<Room[]> => {
     const rooms: Room[] = [];
 
     for (const rawRoom of rawRooms) {
-      if (!isRedisRoomHash(rawRoom)) {
+      if (!isRoomHashType(rawRoom)) {
         console.error('Invalid room data');
         continue;
       }
 
       const alarmDetails = await getAlarmData(rawRoom.alarm);
 
-      if (!isAlarm(alarmDetails)) {
+      if (!isAlarmType(alarmDetails)) {
         console.error(`Invalid alarm data for room ${rawRoom.id}`);
         continue;
       }
@@ -55,14 +55,14 @@ export const getRoom = async (roomId: string): Promise<Room> => {
     const roomKey = getRoomKey(roomId);
     const rawRoom = await getRoomData(roomKey);
 
-    if (!isRedisRoomHash(rawRoom)) {
+    if (!isRoomHashType(rawRoom)) {
       console.error('Invalid room data');
       throw new Error('Invalid room data');
     }
     
     const alarmDetails = await getAlarmData(rawRoom.alarm);
 
-    if (!isAlarm(alarmDetails)) {
+    if (!isAlarmType(alarmDetails)) {
       console.error(`Invalid alarm data for room ${rawRoom.id}`);
       throw new Error(`Invalid alarm data for room ${rawRoom.id}`);
     }
@@ -110,13 +110,13 @@ export const callRoom = async (roomId: string): Promise<void> => {
     }
 
     const credentials = Buffer.from(`${username}:${password}`).toString('base64');
-    const params = new URLSearchParams({ phoneNumber }).toString();
+    const params = new URLSearchParams({ number: phoneNumber }).toString();
 
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Authorization': `Basic ${credentials}`,
-        'Content-type': 'application/x-www-urlencoded'
+        'Content-type': 'application/x-www-form-urlencoded'
       },
       body: params
     });
