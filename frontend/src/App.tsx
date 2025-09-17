@@ -5,12 +5,15 @@ import Summary from './components/Summary';
 import ActiveAlarms from './components/ActiveAlarms';
 import RoomList from './components/RoomList';
 
+const server = {
+  ip: import.meta.env.VITE_SERVER_IP ?? 'localhost',
+  port: import.meta.env.VITE_SERVER_PORT ?? 3000
+}
+
 const App: React.FC = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
-  
-  const SERVER_IP = import.meta.env.VITE_SERVER_IP ?? 'localhost';
-  const SERVER_PORT = import.meta.env.VITE_SERVER_PORT ?? 3000;
+
 
   // utilize useRef to mantain the WebSocket instance without re-render
   const webSocket = useRef<WebSocket | null>(null);
@@ -51,7 +54,7 @@ const App: React.FC = () => {
   useEffect(() => {
     // function that establishes the connection to server
     const connect = () => {
-      const ws = new WebSocket(`ws://${SERVER_IP}:${SERVER_PORT}`);
+      const ws = new WebSocket(`ws://${server.ip}:${server.port}`);
 
       ws.onopen = () => {
         console.log('Connected to WebSocket Server');
