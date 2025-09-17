@@ -11,8 +11,8 @@ const alarmDeviceRouter = Router();
 // Practical risk: if a GET modify a state, proxy or client could cache the response or pre-loading
 // the link, causing indesiderable executions.
 // =================================================================================================
-// NOTE: the endpoint was taken from the previous system implementation and is not editable, but in
-// the future it would be a good idea to change the get method to: PATCH /api/v1/rooms/:id/alarm with
+// NOTE: the limitation is due to the devices itself, which are shelly i3.
+// In the future it would be a good idea to change the get method to: PATCH /api/v1/rooms/:id/alarm with
 // payload { "status": "on" } or { "status": "off" }.
 alarmDeviceRouter.get('/:id/alarm/on', authorizeDevice, turnOnAlarm);
 alarmDeviceRouter.get('/:id/alarm/off', authorizeDevice, turnOffAlarm);
