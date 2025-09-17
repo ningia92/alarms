@@ -4,7 +4,7 @@ This frontend is a modern, responsive dashboard built with **React**, **Vite**, 
 
 ## Features
 
--   **Real-Time Dashboard**: Utilizes a WebSocket connection to the backend (`ws://localhost:3000`) to receive live updates on alarm statuses (`alarm_on`, `alarm_down`, `room_list`). The UI updates instantly without requiring a page refresh. It also includes a robust reconnection mechanism that attempts to re-establish the connection every 3 seconds if it's lost.
+-   **Real-Time Dashboard**: Utilizes a WebSocket connection to the backend (`ws://SERVER_IP:SERVER_PORT`) to receive live updates on alarm statuses (`alarm_on`, `alarm_down`, `room_list`). The UI updates instantly without requiring a page refresh. It also includes a robust reconnection mechanism that attempts to re-establish the connection every 3 seconds if it's lost.
 -   **Interactive UI Components**: The interface is composed of several key components:
     -   **`Summary`**: Displays high-level statistics, including the total number of rooms, active alarms, safe rooms, and unreachable devices.
     -   **`ActiveAlarms`**: A dedicated section that lists all currently active alarms, sorted by the most recent, allowing for quick identification and action.

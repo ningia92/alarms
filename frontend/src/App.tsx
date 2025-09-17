@@ -8,6 +8,9 @@ import RoomList from './components/RoomList';
 const App: React.FC = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+  
+  const SERVER_IP = import.meta.env.VITE_SERVER_IP;
+  const SERVER_PORT = import.meta.env.VITE_SERVER_PORT;
 
   // utilize useRef to mantain the WebSocket instance without re-render
   const webSocket = useRef<WebSocket | null>(null);
@@ -48,7 +51,7 @@ const App: React.FC = () => {
   useEffect(() => {
     // function that establishes the connection to server
     const connect = () => {
-      const ws = new WebSocket('ws://localhost:3000');
+      const ws = new WebSocket(`ws://${SERVER_IP}:${SERVER_PORT}`);
 
       ws.onopen = () => {
         console.log('Connected to WebSocket Server');
@@ -79,7 +82,7 @@ const App: React.FC = () => {
               return room.id === msg.roomId
                 ? {
                   ...room,
-                  alarm : {
+                  alarm: {
                     ...room.alarm,
                     status: msg.status,
                   }

@@ -2,9 +2,7 @@ export type AlarmStatus = 'on' | 'off' | 'down'
 
 interface Alarm {
   ip: string;
-  dev: string;
   status: AlarmStatus;
-  lastUpdate: Date;
   lastActivation: Date;
 }
 
