@@ -10,8 +10,7 @@ const CHECK_INTERVAL = 30000;
 // send an HTTP HEAD to the alarm device to check if it's up
 // if the device does not respond change its status to down
 const isAlarmUp = async (alarm: Alarm): Promise<boolean | undefined> => {
-  const { ip, inputChannel } = alarm;
-  const url = `http://${ip}/input/${inputChannel}`;
+  const url = `http://${alarm.ip}`;
 
   try {
     const response = await fetch(url, {
@@ -21,7 +20,7 @@ const isAlarmUp = async (alarm: Alarm): Promise<boolean | undefined> => {
 
     return response.ok;
   } catch (err) {
-    console.error(`Alarm device with IP ${ip} is unreachable:`, err);
+    console.error(`Alarm device with IP ${alarm.ip} is unreachable:`, err);
   }
 }
 
