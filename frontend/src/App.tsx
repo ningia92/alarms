@@ -9,8 +9,8 @@ const App: React.FC = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   
-  const SERVER_IP = import.meta.env.VITE_SERVER_IP;
-  const SERVER_PORT = import.meta.env.VITE_SERVER_PORT;
+  const SERVER_IP = import.meta.env.VITE_SERVER_IP ?? 'localhost';
+  const SERVER_PORT = import.meta.env.VITE_SERVER_PORT ?? 3000;
 
   // utilize useRef to mantain the WebSocket instance without re-render
   const webSocket = useRef<WebSocket | null>(null);
