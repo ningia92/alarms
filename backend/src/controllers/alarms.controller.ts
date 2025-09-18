@@ -12,7 +12,7 @@ export const turnOnAlarm = async (req: Request, res: Response): Promise<void> =>
     console.error('Missing room id');
     res.status(400).end();
   }
-
+  
   await handleAlarmOn(req.wss, roomId, timestamp);
 
   // set these response headers to mitigate the problem of the caching caused by the unsafe GET
